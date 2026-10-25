@@ -300,7 +300,6 @@ export const OtpVerificationStep = ({
                     onExpire={() => setLeaderToken('')}
                     onError={() => {
                       setLeaderToken('');
-                      setLeaderError('Security CAPTCHA verification failed. Please try again.');
                     }}
                   />
 
@@ -472,7 +471,6 @@ export const OtpVerificationStep = ({
                     onExpire={() => setTeammateToken('')}
                     onError={() => {
                       setTeammateToken('');
-                      setTeammateError('Security CAPTCHA verification failed for teammate.');
                     }}
                   />
 
