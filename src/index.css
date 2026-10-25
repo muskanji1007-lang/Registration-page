@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    border-color: #000000;
+  }
+  
+  body {
+    background-color: #F6F3EB;
+    color: #000000;
+    font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* Custom Halftone Dots Effect */
+.halftone-dots {
+  background-image: radial-gradient(#000000 1.5px, transparent 1.5px);
+  background-size: 8px 8px;
+}
+
+.halftone-dots-white {
+  background-image: radial-gradient(#ffffff 1.5px, transparent 1.5px);
+  background-size: 7px 7px;
+}
+
+.halftone-dots-pink {
+  background-image: radial-gradient(#ffffff 1.5px, transparent 1.5px);
+  background-size: 6px 6px;
+}
+
+/* Neobrutalist custom utilities */
+.neo-box {
+  border: 2px solid #000000;
+  box-shadow: 4px 4px 0px #000000;
+  background-color: #FCFAF6;
+}
+
+.neo-box-lg {
+  border: 2px solid #000000;
+  box-shadow: 6px 6px 0px #000000;
+  background-color: #FCFAF6;
+}
+
+.neo-box-xl {
+  border: 3px solid #000000;
+  box-shadow: 8px 8px 0px #000000;
+  background-color: #FCFAF6;
+}
+
+.neo-button {
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
+  font-weight: 700;
+  transition: all 0.15s ease-in-out;
+}
+
+.neo-button:hover:not(:disabled) {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px #000000;
+}
+
+.neo-button:active:not(:disabled) {
+  transform: translate(3px, 3px);
+  box-shadow: 0px 0px 0px #000000;
+}
+
+.neo-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: 2px 2px 0px #000000;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F6F3EB;
+  border-left: 1px solid #000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #000;
+  border: 1px solid #000;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #FF2E51;
+}
