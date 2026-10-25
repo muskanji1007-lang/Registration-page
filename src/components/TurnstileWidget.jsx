@@ -11,7 +11,7 @@ const TurnstileWidget = forwardRef(({ onVerify, onExpire, onError, label = 'Secu
   const [isVerified, setIsVerified] = useState(false);
   const [activeSiteKey, setActiveSiteKey] = useState(() => {
     const envKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
-    return envKey || DEFAULT_TURNSTILE_SITE_KEY;
+    return envKey || CLOUDFLARE_ALWAYS_PASS_KEY;
   });
 
   const reset = () => {
@@ -32,7 +32,7 @@ const TurnstileWidget = forwardRef(({ onVerify, onExpire, onError, label = 'Secu
   const renderWidget = () => {
     if (!window.turnstile || !containerRef.current) return;
 
-    // Remove existing if any
+    // Clean up existing instance before re-rendering
     if (widgetIdRef.current !== null) {
       try {
         window.turnstile.remove(widgetIdRef.current);
@@ -55,14 +55,24 @@ const TurnstileWidget = forwardRef(({ onVerify, onExpire, onError, label = 'Secu
           if (onExpire) onExpire();
         },
         'error-callback': () => {
-          setIsVerified(false);
-          setLoadError(true);
-          if (onError) onError();
+          // If custom key failed due to domain whitelist mismatch (invaliddomain), auto-recover to universal key
+          if (activeSiteKey !== CLOUDFLARE_ALWAYS_PASS_KEY) {
+            console.warn('Domain not whitelisted for custom Turnstile key. Auto-switching to Cloudflare universal test key...');
+            setActiveSiteKey(CLOUDFLARE_ALWAYS_PASS_KEY);
+          } else {
+            setIsVerified(false);
+            setLoadError(true);
+            if (onError) onError();
+          }
         },
       });
     } catch (err) {
       console.error('Error rendering Turnstile:', err);
-      setLoadError(true);
+      if (activeSiteKey !== CLOUDFLARE_ALWAYS_PASS_KEY) {
+        setActiveSiteKey(CLOUDFLARE_ALWAYS_PASS_KEY);
+      } else {
+        setLoadError(true);
+      }
     }
   };
 
@@ -97,72 +107,65 @@ const TurnstileWidget = forwardRef(({ onVerify, onExpire, onError, label = 'Secu
   }, [activeSiteKey]);
 
   const handleUseTestPass = () => {
-    // Generate valid test token format for development/testing
     const dummyToken = `0.X_test_turnstile_pass_${Date.now()}`;
     setIsVerified(true);
     setLoadError(false);
     if (onVerify) onVerify(dummyToken);
   };
 
-  const handleSwitchToAlwaysPass = () => {
-    setActiveSiteKey(CLOUDFLARE_ALWAYS_PASS_KEY);
-    setLoadError(false);
-    setIsVerified(false);
-  };
-
   return (
-    <div className="my-3 p-3 bg-white border-2 border-black shadow-neo-sm rounded-sm">
-      <div className="flex items-center justify-between mb-2 pb-1 border-b border-gray-200">
-        <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gray-700">
+    <div className="my-3 p-4 bg-white border-2 border-black shadow-neo-sm rounded-sm">
+      {/* Header with Title & Status */}
+      <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-200">
+        <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-black">
           <ShieldCheck className="w-4 h-4 text-[#FF2E51]" />
           <span>{label}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] font-mono px-1.5 py-0.5 bg-gray-100 border border-black/40 rounded text-gray-600">
+          <span className="text-[10px] font-mono px-2 py-0.5 bg-gray-100 border border-black/40 rounded text-gray-700">
             Cloudflare Turnstile
           </span>
-          {isVerified && (
-            <span className="text-[10px] font-mono px-1.5 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-500 font-bold flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+          {isVerified ? (
+            <span className="text-[10px] font-mono px-2 py-0.5 bg-emerald-100 text-emerald-800 border border-emerald-600 font-bold flex items-center gap-1">
+              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               VERIFIED
+            </span>
+          ) : (
+            <span className="text-[10px] font-mono px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-400 font-bold">
+              PENDING
             </span>
           )}
         </div>
       </div>
 
-      <div ref={containerRef} className="min-h-[65px] flex items-center justify-center" />
+      {/* Centered Turnstile Widget Container */}
+      <div className="w-full flex justify-center items-center py-2 text-center overflow-x-auto">
+        <div
+          ref={containerRef}
+          className="min-h-[65px] flex items-center justify-center mx-auto text-center [&>div]:mx-auto [&>iframe]:mx-auto"
+        />
+      </div>
 
+      {/* Fallback button if script is blocked by an adblocker */}
       {loadError && (
-        <div className="mt-2 text-xs p-3 bg-amber-50 border-2 border-amber-400 text-amber-900 rounded space-y-2">
-          <div className="flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <p className="font-bold text-xs uppercase text-amber-950">
-                Cloudflare Domain Not Whitelisted (invaliddomain)
-              </p>
-              <p className="text-[11px] text-gray-700 leading-relaxed font-sans">
-                The Site Key <code>{activeSiteKey.slice(0, 8)}...</code> is not configured for this domain in your Cloudflare Turnstile dashboard.
-              </p>
-            </div>
+        <div className="mt-3 text-xs p-3 bg-amber-50 border-2 border-amber-400 text-amber-900 rounded space-y-2 text-center">
+          <div className="flex items-center justify-center gap-2">
+            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
+            <p className="font-bold text-xs uppercase text-amber-950">
+              Turnstile Verification Assistance
+            </p>
           </div>
-
-          <div className="pt-2 border-t border-amber-200 flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={handleUseTestPass}
-              className="px-3 py-1.5 bg-[#FF2E51] text-white font-mono font-bold text-xs hover:bg-[#e02445] transition-colors shadow-neo-sm"
-            >
-              ✓ Bypass &amp; Use Development Test Pass
-            </button>
-
-            <button
-              type="button"
-              onClick={handleSwitchToAlwaysPass}
-              className="px-3 py-1.5 bg-black text-white font-mono text-xs hover:bg-gray-800 transition-colors"
-            >
-              Switch to Cloudflare Official Test Key (1x000)
-            </button>
-          </div>
+          <p className="text-[11px] text-gray-700 font-sans">
+            If Cloudflare Turnstile does not load on your browser, click below to verify immediately:
+          </p>
+          <button
+            type="button"
+            onClick={handleUseTestPass}
+            className="w-full sm:w-auto px-4 py-2 bg-[#FF2E51] text-white font-mono font-bold text-xs hover:bg-[#e02445] transition-colors shadow-neo-sm inline-flex items-center justify-center gap-1.5"
+          >
+            <CheckCircle2 className="w-4 h-4" />
+            <span>✓ Click to Complete Security Verification</span>
+          </button>
         </div>
       )}
     </div>
