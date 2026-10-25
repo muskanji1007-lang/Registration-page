@@ -25,4 +25,4 @@ export const PHONE_REGEX = /^[6-9]\d{9}$/;
 export const NAME_REGEX = /^[a-zA-Z\s]{2,100}$/;
 
 export const DEFAULT_API_BASE_URL = 'https://registration-form-for-event-ekkr.vercel.app';
-export const DEFAULT_TURNSTILE_SITE_KEY = '0x4AAAAAAFh54ndhiHb7xXKd';
+export const DEFAULT_TURNSTILE_SITE_KEY = '0x4AAAAAAFlswzFQMQC4_HWO';
