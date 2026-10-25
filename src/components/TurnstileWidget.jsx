@@ -7,7 +7,7 @@ const TurnstileWidget = forwardRef(({ onVerify, onExpire, onError, label = 'Secu
   const widgetIdRef = useRef(null);
   const [loadError, setLoadError] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-  const siteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY || DEFAULT_TURNSTILE_SITE_KEY;
+  const siteKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || DEFAULT_TURNSTILE_SITE_KEY).trim();
 
   const reset = () => {
     setIsVerified(false);

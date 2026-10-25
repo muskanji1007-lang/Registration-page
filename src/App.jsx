@@ -107,6 +107,9 @@ export const App = () => {
             <p className="text-gray-500">
               Ajay Kumar Garg Engineering College, Ghaziabad • 100% Free Entry
             </p>
+            <p className="text-[10px] text-gray-400 font-mono tracking-tight pt-1">
+              © 2026 DeBugX • Developed by <span className="text-black font-bold">muskan gupta</span>
+            </p>
           </div>
         </div>
       </footer>
