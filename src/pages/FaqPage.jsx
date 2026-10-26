@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, HelpCircle, ArrowRight, ArrowLeft } from 'lucide-react';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
 
 export const FaqPage = ({ onRegisterClick, onHome }) => {
   const [openIndex, setOpenIndex] = useState(0);
@@ -7,90 +7,95 @@ export const FaqPage = ({ onRegisterClick, onHome }) => {
   const faqs = [
     {
       q: 'Is there any registration fee for DeBugX 2026?',
-      a: 'No! DeBugX 2026 is completely free for all 2nd-year AKGEC students. There is zero participation fee.',
+      a: 'No! DeBugX 2026 is completely free for all AKGEC students. There is zero participation fee or deposit required.',
     },
     {
-      q: 'Who is eligible to participate?',
-      a: 'Only 2nd-year AKGEC students whose student roll number begins with 24 or 25 are eligible to participate. Other batch numbers are automatically rejected.',
+      q: 'Who is eligible to participate in the challenge?',
+      a: 'Only 2nd-year AKGEC students with student roll numbers starting with 24 or 25 are eligible. Registration requires entering your official AKGEC roll number.',
     },
     {
-      q: 'How does team formation work?',
-      a: 'You can compete as a Solo Hunter (1 member) or a Duo Squad (2 members). For Duo squads, Member 1 is the Team Leader and Member 2 is the Teammate. Both members must independently verify their institutional AKGEC emails.',
+      q: 'When and where will the event take place?',
+      a: 'The physical competition will take place on 27th October from 4:00 PM to 7:00 PM at the CSIT Seminar Hall, AKGEC Campus.',
     },
     {
-      q: 'Why does the OTP expire?',
-      a: 'For security reasons, cryptographic 6-digit OTP codes expire strictly after 5 minutes and are single-use. If your code expires, solve a fresh Turnstile CAPTCHA and click Resend OTP.',
+      q: 'How does team formation work for Duo Squads?',
+      a: 'A team consists of exactly 2 members: 1 Team Leader and 1 Teammate. Both members independently verify their college emails via OTP, while all confirmation tickets and notifications are dispatched directly to the Team Leader.',
     },
     {
-      q: 'Where will the event take place?',
-      a: 'The physical challenge will be held at the CCC Lab, 3rd Floor, AKGEC Campus. Timings will be dispatched to the Team Leader via email.',
+      q: 'Why does the OTP expire in 5 minutes?',
+      a: 'To guarantee strict cryptographic security and prevent brute-force attacks, 6-digit verification codes have an authoritative 5-minute lifespan and are single-use only.',
     },
     {
-      q: 'What languages will the buggy codebases be in?',
-      a: 'The challenge tracks cover C++, Python, and JavaScript/Node.js multi-language code inspection, logical puzzles, and runtime diagnostics.',
+      q: 'What languages and tracks are included in the bug hunt?',
+      a: 'The challenge tracks cover multi-language debugging in C++, Python, and JavaScript/TypeScript runtime diagnostics, code inspection, and logical error resolution.',
     },
   ];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-      {/* Header Banner */}
-      <div className="neo-box p-6 md:p-8 bg-[#FCFAF6] space-y-3">
-        <div className="inline-block bg-black text-white px-3 py-0.5 text-xs font-mono font-bold tracking-wider uppercase">
-          FAQ // INTEL
+    <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
+      {/* Main Designer Card */}
+      <div className="neo-box p-6 sm:p-10 bg-[#FCFAF6] space-y-8">
+        {/* Header Title */}
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black font-display uppercase tracking-tight text-black">
+            FREQUENTLY ASKED QUESTIONS
+          </h1>
+          <p className="text-sm sm:text-base font-bold font-sans text-gray-800">
+            Got questions? Everything you need to know about DeBugX 2026.
+          </p>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold font-display uppercase tracking-tight text-black">
-          FREQUENTLY ASKED QUESTIONS
-        </h1>
-        <p className="text-xs font-mono text-gray-600">
-          Got questions about DeBugX 2026? Find quick answers below.
-        </p>
-      </div>
 
-      {/* Accordions */}
-      <div className="space-y-3">
-        {faqs.map((faq, idx) => {
-          const isOpen = openIndex === idx;
-          return (
-            <div key={idx} className="neo-box bg-white overflow-hidden transition-all">
-              <button
-                type="button"
-                onClick={() => setOpenIndex(isOpen ? -1 : idx)}
-                className="w-full p-4 text-left flex items-center justify-between gap-4 font-mono font-bold text-xs sm:text-sm text-black hover:bg-gray-50"
+        {/* 6 Accordion FAQ Items */}
+        <div className="space-y-3">
+          {faqs.map((faq, idx) => {
+            const isOpen = openIndex === idx;
+
+            return (
+              <div
+                key={idx}
+                className="rounded-xl border border-[#B8C8D4] bg-[#EFECE3]/70 overflow-hidden transition-all shadow-sm"
               >
-                <div className="flex items-center gap-2.5">
-                  <span className="text-[#FF2E51] font-bold">Q{idx + 1}.</span>
-                  <span>{faq.q}</span>
-                </div>
-                {isOpen ? <ChevronUp className="w-4 h-4 shrink-0" /> : <ChevronDown className="w-4 h-4 shrink-0" />}
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(isOpen ? -1 : idx)}
+                  className="w-full px-5 py-4 flex items-center justify-between text-left transition-colors hover:bg-[#E8E4DA]"
+                >
+                  <span className="font-sans font-bold text-base sm:text-lg text-black">
+                    {faq.q}
+                  </span>
+                  <span className="text-xl sm:text-2xl font-bold font-mono text-[#0284C7] ml-4 leading-none">
+                    {isOpen ? '—' : '+'}
+                  </span>
+                </button>
 
-              {isOpen && (
-                <div className="px-4 pb-4 pt-1 border-t border-black/10 text-xs font-sans text-gray-700 leading-relaxed bg-[#FCFAF6]">
-                  {faq.a}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
+                {isOpen && (
+                  <div className="px-5 pb-5 pt-1 text-xs sm:text-sm font-sans text-gray-700 leading-relaxed border-t border-[#B8C8D4]/40">
+                    {faq.a}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
 
-      {/* Footer CTA */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t-2 border-black/10">
-        <button
-          onClick={onHome}
-          className="neo-button bg-white text-black px-5 py-2.5 text-xs font-mono font-bold tracking-wider uppercase hover:bg-gray-100 flex items-center gap-1.5"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>RETURN TO HOME</span>
-        </button>
+        {/* Action Buttons */}
+        <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t-2 border-black/10">
+          <button
+            onClick={onHome}
+            className="neo-button bg-white text-black px-5 py-2.5 text-xs font-mono font-bold tracking-wider uppercase hover:bg-gray-100 flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>RETURN TO HOME</span>
+          </button>
 
-        <button
-          onClick={onRegisterClick}
-          className="neo-button bg-[#FF2E51] text-white px-6 py-2.5 text-xs font-mono font-bold tracking-wider uppercase hover:bg-[#e02445] flex items-center gap-2"
-        >
-          <span>REGISTER NOW</span>
-          <ArrowRight className="w-4 h-4" />
-        </button>
+          <button
+            onClick={onRegisterClick}
+            className="neo-button bg-[#FF2E51] text-white px-7 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase hover:bg-[#e02445] flex items-center gap-2"
+          >
+            <span>REGISTER NOW</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   );

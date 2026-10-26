@@ -1,102 +1,173 @@
-import React from 'react';
-import { Shield, CheckCircle2, AlertTriangle, ArrowRight, ArrowLeft } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
 
 export const RulesPage = ({ onRegisterClick, onHome }) => {
+  // Active accordion index (0 is open by default matching Slide 5)
+  const [openIndex, setOpenIndex] = useState(0);
+
+  const rules = [
+    {
+      num: 1,
+      title: '1. Eligibility',
+      content:
+        'Participation is subject to the eligibility criteria participated by the Society. 2nd year students only.',
+    },
+    {
+      num: 2,
+      title: '2. Challenge Format',
+      content:
+        'Compete individually as a Solo Hunter or in pairs as a Duo Squad. Real-time debugging of deliberately injected system bugs across diverse codebases and technologies.',
+    },
+    {
+      num: 3,
+      title: '3. Time Limit',
+      content:
+        '3 hours of high-stakes live bug-hunting from 4:00 PM to 7:00 PM on 27th October at CSIT Seminar Hall. Teams must complete tasks within the allocated timeframe.',
+    },
+    {
+      num: 4,
+      title: '4. Fair Play',
+      content:
+        'Zero tolerance for unauthorized collaboration, internet proxy bypass, or plagiarism. All terminal instances and git commits are continuously monitored.',
+    },
+    {
+      num: 5,
+      title: '5. Evaluation',
+      content:
+        'Scoring is calculated automatically based on bug fix accuracy, test suite passes, and submission speed. In case of a tie, the team with fewer test run attempts ranks higher.',
+    },
+  ];
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-      {/* Header Banner */}
-      <div className="neo-box p-6 md:p-8 bg-[#FCFAF6] space-y-3">
-        <div className="inline-block bg-[#FF2E51] text-white px-3 py-0.5 text-xs font-mono font-bold tracking-wider uppercase">
-          EVENT PROTOCOL // 2026
-        </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold font-display uppercase tracking-tight text-black">
-          RULES &amp; COMPETITION PROTOCOL
-        </h1>
-        <p className="text-xs font-mono text-gray-600">
-          Official DeBugX 2026 guidelines established by Cloud Computing Cell (CCC), AKGEC.
-        </p>
-      </div>
-
-      {/* Rules Grid */}
-      <div className="space-y-4">
-        {/* Rule 1 */}
-        <div className="neo-box p-5 bg-white space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="w-6 h-6 bg-black text-white font-mono font-bold text-xs flex items-center justify-center">
-              01
-            </span>
-            <h3 className="font-display font-extrabold text-sm uppercase text-black">
-              STRICT ELIGIBILITY &amp; ZERO PARTICIPATION FEE
-            </h3>
-          </div>
-          <p className="text-xs font-sans text-gray-700 leading-relaxed pl-8">
-            DeBugX is an entirely <strong>free</strong> technical challenge strictly for 2nd-year AKGEC students. No registration fee is required. All candidates must have a valid student roll number beginning with <strong>24 or 25</strong>.
+    <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
+      {/* Main Designer Card (Exact match to Slide 5) */}
+      <div className="neo-box p-6 sm:p-10 bg-[#FCFAF6] space-y-8">
+        {/* Header Title */}
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black font-display uppercase tracking-tight text-black">
+            RULES OF THE HUNT
+          </h1>
+          <p className="text-sm sm:text-base font-bold font-sans text-gray-800">
+            Know the rules. Find the bug. Complete the mission.
           </p>
         </div>
 
-        {/* Rule 2 */}
-        <div className="neo-box p-5 bg-white space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="w-6 h-6 bg-[#FF2E51] text-white font-mono font-bold text-xs flex items-center justify-center">
-              02
-            </span>
-            <h3 className="font-display font-extrabold text-sm uppercase text-black">
-              ROSTER FORMAT: SOLO OR DUO SQUAD
-            </h3>
-          </div>
-          <p className="text-xs font-sans text-gray-700 leading-relaxed pl-8">
-            Participants may register as a <strong>Solo Hunter</strong> (1 member, self-leader) or a <strong>Duo Squad</strong> (strictly 2 members: 1 Team Leader + 1 Teammate). Individual members cannot register under multiple teams.
-          </p>
+        {/* 5 Accordion Rule Items */}
+        <div className="space-y-3">
+          {rules.map((rule, idx) => {
+            const isOpen = openIndex === idx;
+
+            return (
+              <div
+                key={rule.num}
+                className="rounded-xl border border-[#B8C8D4] bg-[#EFECE3]/70 overflow-hidden transition-all shadow-sm"
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(isOpen ? -1 : idx)}
+                  className="w-full px-5 py-4 flex items-center justify-between text-left transition-colors hover:bg-[#E8E4DA]"
+                >
+                  <span className="font-sans font-bold text-base sm:text-lg text-black">
+                    {rule.title}
+                  </span>
+                  <span className="text-xl sm:text-2xl font-bold font-mono text-[#0284C7] ml-4 leading-none">
+                    {isOpen ? '—' : '+'}
+                  </span>
+                </button>
+
+                {isOpen && (
+                  <div className="px-5 pb-5 pt-1 text-xs sm:text-sm font-sans text-gray-700 leading-relaxed border-t border-[#B8C8D4]/40">
+                    {rule.content}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
-        {/* Rule 3 */}
-        <div className="neo-box p-5 bg-white space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="w-6 h-6 bg-black text-white font-mono font-bold text-xs flex items-center justify-center">
-              03
-            </span>
-            <h3 className="font-display font-extrabold text-sm uppercase text-black">
-              INDEPENDENT OTP VERIFICATION
-            </h3>
-          </div>
-          <p className="text-xs font-sans text-gray-700 leading-relaxed pl-8">
-            Every candidate must independently verify their official institutional AKGEC email (<code className="bg-gray-100 px-1 border border-black/20">firstName + studentNumber + @akgec.ac.in</code>) via a 6-digit cryptographic OTP.
-          </p>
+        {/* Retro Halftone DeBugX Logo (Exact match to Slide 5) */}
+        <div className="flex justify-center pt-4">
+          <svg
+            viewBox="0 0 360 80"
+            className="w-full max-w-[340px] drop-shadow-sm select-none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              {/* Halftone Dot Pattern */}
+              <pattern
+                id="dot-grid"
+                x="0"
+                y="0"
+                width="6"
+                height="6"
+                patternUnits="userSpaceOnUse"
+              >
+                <circle cx="3" cy="3" r="1.6" fill="#1E293B" />
+              </pattern>
+              {/* Pink Halftone Dot Pattern for X */}
+              <pattern
+                id="pink-dot-grid"
+                x="0"
+                y="0"
+                width="6"
+                height="6"
+                patternUnits="userSpaceOnUse"
+              >
+                <circle cx="3" cy="3" r="1.6" fill="#FF2E51" />
+              </pattern>
+            </defs>
+
+            {/* Stylized Slanted Retro Text "DeBug" */}
+            <text
+              x="20"
+              y="60"
+              fontFamily="monospace, sans-serif"
+              fontSize="52"
+              fontWeight="900"
+              fontStyle="italic"
+              fill="url(#dot-grid)"
+              stroke="#000"
+              strokeWidth="2.5"
+              letterSpacing="2"
+            >
+              DeBug
+            </text>
+
+            {/* Stylized Pink X */}
+            <text
+              x="250"
+              y="60"
+              fontFamily="monospace, sans-serif"
+              fontSize="56"
+              fontWeight="900"
+              fontStyle="italic"
+              fill="url(#pink-dot-grid)"
+              stroke="#000"
+              strokeWidth="2.5"
+            >
+              X
+            </text>
+          </svg>
         </div>
 
-        {/* Rule 4 */}
-        <div className="neo-box p-5 bg-white space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="w-6 h-6 bg-black text-white font-mono font-bold text-xs flex items-center justify-center">
-              04
-            </span>
-            <h3 className="font-display font-extrabold text-sm uppercase text-black">
-              LEADER RECEIPT &amp; CORRESPONDENCE
-            </h3>
-          </div>
-          <p className="text-xs font-sans text-gray-700 leading-relaxed pl-8">
-            All transactional emails, room assignments, and leaderboard notifications will be sent <strong>exclusively to the Team Leader</strong>. Teammates must stay coordinated with their Leader.
-          </p>
+        {/* Action Button */}
+        <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t-2 border-black/10">
+          <button
+            onClick={onHome}
+            className="neo-button bg-white text-black px-5 py-2.5 text-xs font-mono font-bold tracking-wider uppercase hover:bg-gray-100 flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>RETURN TO HOME</span>
+          </button>
+
+          <button
+            onClick={onRegisterClick}
+            className="neo-button bg-[#FF2E51] text-white px-7 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase hover:bg-[#e02445] flex items-center gap-2"
+          >
+            <span>JOIN THE HUNT NOW</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
-      </div>
-
-      {/* Action Footer */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t-2 border-black/10">
-        <button
-          onClick={onHome}
-          className="neo-button bg-white text-black px-5 py-2.5 text-xs font-mono font-bold tracking-wider uppercase hover:bg-gray-100 flex items-center gap-1.5"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          <span>RETURN TO HOME</span>
-        </button>
-
-        <button
-          onClick={onRegisterClick}
-          className="neo-button bg-[#FF2E51] text-white px-6 py-2.5 text-xs font-mono font-bold tracking-wider uppercase hover:bg-[#e02445] flex items-center gap-2"
-        >
-          <span>JOIN THE HUNT NOW</span>
-          <ArrowRight className="w-4 h-4" />
-        </button>
       </div>
     </div>
   );
