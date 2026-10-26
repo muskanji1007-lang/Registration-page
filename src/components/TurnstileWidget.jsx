@@ -9,8 +9,11 @@ const TurnstileWidget = forwardRef(({ onVerify, onSuccess, onExpire, onError, la
   const [isVerified, setIsVerified] = useState(false);
   const [isExpired, setIsExpired] = useState(false);
 
-  // Active site key strictly from env or project constants - NO dummy test bypass
-  const activeSiteKey = ((import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim()) || DEFAULT_TURNSTILE_SITE_KEY;
+  // Active site key: prioritize working key, ignoring any outdated key stuck in Vercel env
+  const envKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
+  const activeSiteKey = (envKey && envKey !== '0x4AAAAAAFlswzFQMQC4_HWO')
+    ? envKey
+    : DEFAULT_TURNSTILE_SITE_KEY;
 
   const reset = () => {
     setIsVerified(false);
