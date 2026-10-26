@@ -2,38 +2,35 @@ import React, { useState } from 'react';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 
 export const FaqPage = ({ onRegisterClick, onHome }) => {
+  // Active accordion index (0 is open by default matching Slide)
   const [openIndex, setOpenIndex] = useState(0);
 
   const faqs = [
     {
-      q: 'Is there any registration fee for DeBugX 2026?',
-      a: 'No! DeBugX 2026 is completely free for all AKGEC students. There is zero participation fee or deposit required.',
+      q: 'Who can participate?',
+      a: 'Eligibility will follow the official event announcement. Confirm the 2nd year eligibility criteria with the organisers. Valid student roll numbers starting with 24 or 25 are required.',
     },
     {
-      q: 'Who is eligible to participate in the challenge?',
-      a: 'Only 2nd-year AKGEC students with student roll numbers starting with 24 or 25 are eligible. Registration requires entering your official AKGEC roll number.',
+      q: 'Is participation individual or team-based?',
+      a: 'You can compete individually as a Solo Hunter (1 member) or team up as a collaborative Duo Squad (2 members). For Duo squads, both members must independently verify their institutional AKGEC email.',
+    },
+    {
+      q: 'What should I bring?',
+      a: 'Please bring your valid AKGEC Student ID Card, your registration pass / ID, and your laptop with chargers. Make sure you have standard development runtimes (Node.js, Python, or C/C++) ready.',
     },
     {
       q: 'When and where will the event take place?',
-      a: 'The physical competition will take place on 27th October from 4:00 PM to 7:00 PM at the CSIT Seminar Hall, AKGEC Campus.',
+      a: 'The physical competition will take place on 30th October from 4:00 PM to 7:00 PM at the CSIT Seminar Hall, AKGEC Campus.',
     },
     {
-      q: 'How does team formation work for Duo Squads?',
-      a: 'A team consists of exactly 2 members: 1 Team Leader and 1 Teammate. Both members independently verify their college emails via OTP, while all confirmation tickets and notifications are dispatched directly to the Team Leader.',
-    },
-    {
-      q: 'Why does the OTP expire in 5 minutes?',
-      a: 'To guarantee strict cryptographic security and prevent brute-force attacks, 6-digit verification codes have an authoritative 5-minute lifespan and are single-use only.',
-    },
-    {
-      q: 'What languages and tracks are included in the bug hunt?',
-      a: 'The challenge tracks cover multi-language debugging in C++, Python, and JavaScript/TypeScript runtime diagnostics, code inspection, and logical error resolution.',
+      q: 'Still have questions?',
+      a: 'Reach out directly to the Cloud Computing Cell (CCC) student coordinators or visit the CCC Lab on the 3rd Floor for any queries.',
     },
   ];
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
-      {/* Main Designer Card */}
+      {/* Main Designer Card (Exact match to Slide) */}
       <div className="neo-box p-6 sm:p-10 bg-[#FCFAF6] space-y-8">
         {/* Header Title */}
         <div className="text-center space-y-2">
@@ -41,11 +38,11 @@ export const FaqPage = ({ onRegisterClick, onHome }) => {
             FREQUENTLY ASKED QUESTIONS
           </h1>
           <p className="text-sm sm:text-base font-bold font-sans text-gray-800">
-            Got questions? Everything you need to know about DeBugX 2026.
+            Everything you should know before joining hunt
           </p>
         </div>
 
-        {/* 6 Accordion FAQ Items */}
+        {/* 5 Accordion Items (Exact match to Slide) */}
         <div className="space-y-3">
           {faqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
@@ -78,6 +75,71 @@ export const FaqPage = ({ onRegisterClick, onHome }) => {
           })}
         </div>
 
+        {/* Retro Halftone DeBugX Logo (Exact match to Slide) */}
+        <div className="flex justify-center pt-4">
+          <svg
+            viewBox="0 0 360 80"
+            className="w-full max-w-[340px] drop-shadow-sm select-none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <defs>
+              {/* Halftone Dot Pattern */}
+              <pattern
+                id="faq-dot-grid"
+                x="0"
+                y="0"
+                width="6"
+                height="6"
+                patternUnits="userSpaceOnUse"
+              >
+                <circle cx="3" cy="3" r="1.6" fill="#1E293B" />
+              </pattern>
+              {/* Pink Halftone Dot Pattern for X */}
+              <pattern
+                id="faq-pink-dot-grid"
+                x="0"
+                y="0"
+                width="6"
+                height="6"
+                patternUnits="userSpaceOnUse"
+              >
+                <circle cx="3" cy="3" r="1.6" fill="#FF2E51" />
+              </pattern>
+            </defs>
+
+            {/* Stylized Slanted Retro Text "DeBug" */}
+            <text
+              x="20"
+              y="60"
+              fontFamily="monospace, sans-serif"
+              fontSize="52"
+              fontWeight="900"
+              fontStyle="italic"
+              fill="url(#faq-dot-grid)"
+              stroke="#000"
+              strokeWidth="2.5"
+              letterSpacing="2"
+            >
+              DeBug
+            </text>
+
+            {/* Stylized Pink X */}
+            <text
+              x="250"
+              y="60"
+              fontFamily="monospace, sans-serif"
+              fontSize="56"
+              fontWeight="900"
+              fontStyle="italic"
+              fill="url(#faq-pink-dot-grid)"
+              stroke="#000"
+              strokeWidth="2.5"
+            >
+              X
+            </text>
+          </svg>
+        </div>
+
         {/* Action Buttons */}
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t-2 border-black/10">
           <button
@@ -92,7 +154,7 @@ export const FaqPage = ({ onRegisterClick, onHome }) => {
             onClick={onRegisterClick}
             className="neo-button bg-[#FF2E51] text-white px-7 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase hover:bg-[#e02445] flex items-center gap-2"
           >
-            <span>REGISTER NOW</span>
+            <span>JOIN THE HUNT NOW</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>

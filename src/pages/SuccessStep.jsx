@@ -72,7 +72,7 @@ export const SuccessStep = ({
             <div className="bg-[#102235] text-white p-3.5 rounded-lg flex flex-col items-center justify-center border border-white/10 shadow-inner">
               <Calendar className="w-5 h-5 text-[#38BDF8] mb-1" />
               <span className="text-xs sm:text-sm font-mono font-bold tracking-wide">
-                27 Oct
+                30 Oct
               </span>
             </div>
 

@@ -22,7 +22,7 @@ export const RulesPage = ({ onRegisterClick, onHome }) => {
       num: 3,
       title: '3. Time Limit',
       content:
-        '3 hours of high-stakes live bug-hunting from 4:00 PM to 7:00 PM on 27th October at CSIT Seminar Hall. Teams must complete tasks within the allocated timeframe.',
+        '3 hours of high-stakes live bug-hunting from 4:00 PM to 7:00 PM on 30th October at CSIT Seminar Hall. Teams must complete tasks within the allocated timeframe.',
     },
     {
       num: 4,
