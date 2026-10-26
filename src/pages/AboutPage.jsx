@@ -69,7 +69,6 @@ export const AboutPage = ({ onRegisterClick, onRulesClick }) => {
 
             <div className="pt-3 border-t border-black/10 flex items-center justify-between text-[11px] font-mono">
               <span className="text-gray-600">FIG 01 • CRITICAL ERROR DISCOVERY</span>
-              <span className="text-[#FF2E51] font-bold">[VERIFIED RUNTIME]</span>
             </div>
           </div>
         </div>

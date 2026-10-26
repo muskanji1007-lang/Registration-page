@@ -418,7 +418,8 @@ export const OtpVerificationStep = ({
                         {leaderLoading ? (
                           <RefreshCw className="w-4 h-4 animate-spin text-black" />
                         ) : null}
-                        <span>Verify &rarr;</span>
+                        <span>Verify</span>
+                        <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
 
@@ -527,7 +528,8 @@ export const OtpVerificationStep = ({
                         {teammateLoading ? (
                           <RefreshCw className="w-4 h-4 animate-spin text-black" />
                         ) : null}
-                        <span>Verify &rarr;</span>
+                        <span>Verify</span>
+                        <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
 

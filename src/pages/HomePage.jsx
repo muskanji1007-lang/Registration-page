@@ -23,7 +23,7 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
           <div className="relative select-none space-y-1">
             <DebugXLogo size="xl" />
             <div className="text-[11px] font-mono tracking-widest text-gray-500 font-semibold uppercase">
-              CLOUD COMPUTING CELL • EDITION 2026
+              CLOUD COMPUTING CELL
             </div>
           </div>
 
