@@ -99,7 +99,7 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
       {/* 4 Bottom Metric / Specification Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Eligibility */}
-        <div className="neo-box p-4 bg-white hover:-translate-y-1 transition-transform">
+        <div className="neo-card-interactive p-4 bg-white">
           <div className="flex items-center justify-between text-xs font-mono font-bold text-gray-600 mb-1">
             <span>[ ELIGIBILITY ]</span>
             <GraduationCap className="w-4 h-4 text-[#FF2E51]" />
@@ -111,7 +111,7 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
         </div>
 
         {/* Card 2: Team Format */}
-        <div className="neo-box p-4 bg-white hover:-translate-y-1 transition-transform">
+        <div className="neo-card-interactive p-4 bg-white">
           <div className="flex items-center justify-between text-xs font-mono font-bold text-gray-600 mb-1">
             <span>[ TEAM FORMAT ]</span>
             <Users className="w-4 h-4 text-[#FF2E51]" />
@@ -123,7 +123,7 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
         </div>
 
         {/* Card 3: Track */}
-        <div className="neo-box p-4 bg-white hover:-translate-y-1 transition-transform">
+        <div className="neo-card-interactive p-4 bg-white">
           <div className="flex items-center justify-between text-xs font-mono font-bold text-gray-600 mb-1">
             <span>[ TRACK ]</span>
             <Code className="w-4 h-4 text-[#FF2E51]" />
@@ -135,7 +135,7 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
         </div>
 
         {/* Card 4: Venue */}
-        <div className="neo-box p-4 bg-white hover:-translate-y-1 transition-transform">
+        <div className="neo-card-interactive p-4 bg-white">
           <div className="flex items-center justify-between text-xs font-mono font-bold text-gray-600 mb-1">
             <span>[ VENUE ]</span>
             <MapPin className="w-4 h-4 text-[#FF2E51]" />

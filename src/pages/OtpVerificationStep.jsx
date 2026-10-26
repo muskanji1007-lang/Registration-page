@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Mail, CheckCircle2, AlertCircle, RefreshCw, ArrowRight, ArrowLeft, ShieldCheck, User, Users } from 'lucide-react';
 import TurnstileWidget from '../components/TurnstileWidget';
+import RegistrationStepper from '../components/RegistrationStepper';
 import { apiService } from '../services/apiService';
 
 export const OtpVerificationStep = ({
@@ -294,63 +295,9 @@ export const OtpVerificationStep = ({
         </h1>
       </div>
 
-      {/* 4-Step Stepper Header (Matching Slide 3 with Step 3 / 4 highlighted) */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 border-2 border-black p-1.5 bg-[#F6F3EB] shadow-neo-sm">
-        <div className="p-2.5 border-2 border-black/30 bg-[#FCFAF6] flex items-center gap-2.5">
-          <div className="w-6 h-6 shrink-0 flex items-center justify-center font-mono font-bold text-xs bg-[#FF2E51] text-white">
-            1
-          </div>
-          <div className="leading-tight overflow-hidden">
-            <div className="text-[11px] font-mono font-bold tracking-tight uppercase truncate text-black">
-              PERSONAL DETAILS
-            </div>
-            <div className="text-[9px] font-mono text-gray-500 truncate">
-              Completed
-            </div>
-          </div>
-        </div>
-
-        <div className="p-2.5 border-2 border-black/30 bg-[#FCFAF6] flex items-center gap-2.5">
-          <div className="w-6 h-6 shrink-0 flex items-center justify-center font-mono font-bold text-xs bg-gray-200 text-black">
-            2
-          </div>
-          <div className="leading-tight overflow-hidden">
-            <div className="text-[11px] font-mono font-bold tracking-tight uppercase truncate text-black">
-              ADDITIONAL DETAILS
-            </div>
-            <div className="text-[9px] font-mono text-gray-500 truncate">
-              Completed
-            </div>
-          </div>
-        </div>
-
-        <div className="p-2.5 border-2 border-black bg-black text-white flex items-center gap-2.5 shadow-neo-sm">
-          <div className="w-6 h-6 shrink-0 flex items-center justify-center font-mono font-bold text-xs bg-white text-black">
-            3
-          </div>
-          <div className="leading-tight overflow-hidden">
-            <div className="text-[11px] font-mono font-bold tracking-tight uppercase truncate text-white">
-              REVIEW
-            </div>
-            <div className="text-[9px] font-mono text-gray-300 truncate">
-              Audited
-            </div>
-          </div>
-        </div>
-
-        <div className="p-2.5 border-2 border-black bg-[#FF2E51] text-white flex items-center gap-2.5 shadow-neo-sm">
-          <div className="w-6 h-6 shrink-0 flex items-center justify-center font-mono font-bold text-xs bg-black text-white">
-            4
-          </div>
-          <div className="leading-tight overflow-hidden">
-            <div className="text-[11px] font-mono font-bold tracking-tight uppercase truncate text-white">
-              SUBMIT
-            </div>
-            <div className="text-[9px] font-mono text-white/80 truncate">
-              Final Verification
-            </div>
-          </div>
-        </div>
+      {/* Stepper Header */}
+      <div className="max-w-2xl mx-auto w-full">
+        <RegistrationStepper currentStep={isTeam ? 3 : 2} isTeam={isTeam} />
       </div>
 
       {/* For Duo Squad: Tab Switcher */}
@@ -620,7 +567,7 @@ export const OtpVerificationStep = ({
           className="neo-button bg-white text-black px-5 py-2.5 text-xs font-mono font-bold tracking-wider uppercase hover:bg-gray-100 flex items-center justify-center gap-2 w-full sm:w-auto"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>EDIT REVIEW</span>
+          <span>BACK</span>
         </button>
 
         <button

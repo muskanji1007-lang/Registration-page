@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import FormField from '../components/FormField';
 import Crewmate from '../components/Crewmate';
-import ReviewStep from './ReviewStep';
+import RegistrationStepper from '../components/RegistrationStepper';
 import OtpVerificationStep from './OtpVerificationStep';
 import SuccessStep from './SuccessStep';
 import { BRANCHES, GENDERS, RESIDENCE_TYPES } from '../utils/constants';
@@ -22,10 +22,9 @@ import { apiService } from '../services/apiService';
 export const RegistrationPage = ({ onHome }) => {
   // Steps:
   // 1: Personal Details (Candidate / Leader + Participation Format)
-  // 2: Additional Details (Teammate Details if Duo Squad)
-  // 3: Review Details (Slide 2)
-  // 4: Email Verification & Submit (Slide 3)
-  // 5: Confirmed Pass (Slide 4 - "You're In, Crewmate")
+  // 2: Teammate Details (if Duo Squad)
+  // 3: Email Verification & Submit (Slide 3)
+  // 4: Confirmed Pass (Slide 4 - "You're In, Crewmate")
   const [currentStep, setCurrentStep] = useState(1);
 
   // Form State
@@ -195,8 +194,8 @@ export const RegistrationPage = ({ onHome }) => {
 
     setFormErrors({});
 
-    // If Duo Squad, move to Step 2 (Additional Details for Teammate).
-    // If Solo Hunter, skip to Step 3 (Review).
+    // If Duo Squad, move to Step 2 (Teammate Details).
+    // If Solo Hunter, skip directly to Step 3 (Email OTP Verification).
     if (formData.registrationType === 'team') {
       setCurrentStep(2);
     } else {
@@ -205,7 +204,7 @@ export const RegistrationPage = ({ onHome }) => {
     window.scrollTo({ top: 80, behavior: 'smooth' });
   };
 
-  // Step 2 Validation (Teammate Details) & Proceed to Review
+  // Step 2 Validation (Teammate Details) & Proceed directly to Email OTP Verification
   const handleProceedFromStep2 = (e) => {
     e.preventDefault();
     const errors = {};
@@ -231,20 +230,14 @@ export const RegistrationPage = ({ onHome }) => {
     }
 
     setFormErrors({});
-    setCurrentStep(3); // Go to Review
+    setCurrentStep(3); // Go directly to OTP Verification
     window.scrollTo({ top: 80, behavior: 'smooth' });
   };
 
-  // Step 3 (Review) Proceed to Step 4 (Verify OTP)
-  const handleProceedToVerification = () => {
-    setCurrentStep(4);
-    window.scrollTo({ top: 80, behavior: 'smooth' });
-  };
-
-  // Step 4 Completion (Confirmed final registration saved)
+  // Step 3 Completion (Confirmed final registration saved) -> Step 4
   const handleConfirmedSubmit = (registrationRecord) => {
     setConfirmedRegistration(registrationRecord);
-    setCurrentStep(5); // Go to "You're In, Crewmate"
+    setCurrentStep(4); // Go to "You're In, Crewmate"
     window.scrollTo({ top: 50, behavior: 'smooth' });
   };
 
@@ -288,7 +281,7 @@ export const RegistrationPage = ({ onHome }) => {
           className="flex items-center gap-1.5 hover:text-black font-bold uppercase transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          <span>&larr; BACK TO HOME</span>
+          <span>BACK TO HOME</span>
         </button>
         <span className="font-bold tracking-widest text-black uppercase">
           DeBugX 2026 • Registration Desk
@@ -323,68 +316,8 @@ export const RegistrationPage = ({ onHome }) => {
       {/* STEP 1: PERSONAL DETAILS (Matching Slide 1) */}
       {currentStep === 1 && (
         <form onSubmit={handleProceedFromStep1} className="neo-box p-6 md:p-8 bg-[#FCFAF6] space-y-8">
-          {/* Stepper Header (Matching Slide 1) */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 border-2 border-black p-1.5 bg-[#F6F3EB] shadow-neo-sm">
-            {/* 1 PERSONAL DETAILS (Active) */}
-            <div className="p-2.5 border-2 border-black bg-[#FCFAF6] flex items-center gap-2.5 shadow-neo-sm">
-              <div className="w-6 h-6 shrink-0 flex items-center justify-center font-mono font-bold text-xs bg-[#FF2E51] text-white">
-                1
-              </div>
-              <div className="leading-tight overflow-hidden">
-                <div className="text-[11px] font-mono font-bold tracking-tight uppercase truncate text-black">
-                  PERSONAL DETAILS
-                </div>
-                <div className="text-[9px] font-mono text-gray-500 truncate">
-                  Active Step
-                </div>
-              </div>
-            </div>
-
-            {/* 2 ADDITIONAL DETAILS */}
-            <div className="p-2.5 border-2 border-black bg-black text-white flex items-center gap-2.5">
-              <div className="w-6 h-6 shrink-0 flex items-center justify-center font-mono font-bold text-xs bg-white text-black">
-                2
-              </div>
-              <div className="leading-tight overflow-hidden">
-                <div className="text-[11px] font-mono font-bold tracking-tight uppercase truncate text-white">
-                  ADDITIONAL DETAILS
-                </div>
-                <div className="text-[9px] font-mono text-gray-300 truncate">
-                  Next Step
-                </div>
-              </div>
-            </div>
-
-            {/* 3 REVIEW */}
-            <div className="p-2.5 border-2 border-black/30 bg-[#FCFAF6] flex items-center gap-2.5">
-              <div className="w-6 h-6 shrink-0 flex items-center justify-center font-mono font-bold text-xs bg-gray-200 text-black">
-                3
-              </div>
-              <div className="leading-tight overflow-hidden">
-                <div className="text-[11px] font-mono font-bold tracking-tight uppercase truncate text-black">
-                  REVIEW
-                </div>
-                <div className="text-[9px] font-mono text-gray-500 truncate">
-                  Pending
-                </div>
-              </div>
-            </div>
-
-            {/* 4 SUBMIT */}
-            <div className="p-2.5 border-2 border-black/30 bg-[#FCFAF6] flex items-center gap-2.5">
-              <div className="w-6 h-6 shrink-0 flex items-center justify-center font-mono font-bold text-xs bg-gray-200 text-black">
-                4
-              </div>
-              <div className="leading-tight overflow-hidden">
-                <div className="text-[11px] font-mono font-bold tracking-tight uppercase truncate text-black">
-                  SUBMIT
-                </div>
-                <div className="text-[9px] font-mono text-gray-500 truncate">
-                  Final
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Stepper Header */}
+          <RegistrationStepper currentStep={1} isTeam={formData.registrationType === 'team'} />
 
           {/* Section 1: Member Details */}
           <div className="space-y-6">
@@ -587,7 +520,7 @@ export const RegistrationPage = ({ onHome }) => {
               <button
                 type="button"
                 onClick={() => setFormData((prev) => ({ ...prev, registrationType: 'solo' }))}
-                className={`p-4 border-2 text-left transition-all relative ${
+                className={`p-4 border-2 text-left transition-all duration-150 cursor-pointer hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-[3px] active:translate-y-[3px] relative ${
                   formData.registrationType === 'solo'
                     ? 'border-[#FF2E51] bg-white ring-1 ring-[#FF2E51] shadow-[4px_4px_0px_0px_#FF2E51]'
                     : 'border-black/30 bg-white hover:border-black'
@@ -613,7 +546,7 @@ export const RegistrationPage = ({ onHome }) => {
               <button
                 type="button"
                 onClick={() => setFormData((prev) => ({ ...prev, registrationType: 'team' }))}
-                className={`p-4 border-2 text-left transition-all relative ${
+                className={`p-4 border-2 text-left transition-all duration-150 cursor-pointer hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-[3px] active:translate-y-[3px] relative ${
                   formData.registrationType === 'team'
                     ? 'bg-black text-white border-black shadow-neo'
                     : 'border-black/30 bg-white hover:border-black text-black'
@@ -662,17 +595,6 @@ export const RegistrationPage = ({ onHome }) => {
             </div>
           </div>
 
-          {/* Security Banner (Matching Slide 1) */}
-          <div className="p-3.5 bg-white border-2 border-black/30 shadow-neo-sm flex items-center gap-3">
-            <ShieldCheck className="w-5 h-5 text-[#FF2E51] shrink-0" />
-            <div className="text-xs font-mono text-gray-700">
-              <strong className="text-black uppercase">
-                PROTECTED WITH CLOUDFLARE TURNSTILE &amp; AKGEC CCC GATEWAY.
-              </strong>{' '}
-              A one-time verification code (OTP) will be sent to your institutional email.
-            </div>
-          </div>
-
           {/* Bottom Action Buttons (Matching Slide 1) */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 pt-4 border-t-2 border-black/10">
             <button
@@ -681,14 +603,14 @@ export const RegistrationPage = ({ onHome }) => {
               className="neo-button bg-white text-black px-5 py-2.5 text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-gray-100 w-full sm:w-auto"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>&larr; BACK TO HOME</span>
+              <span>BACK TO HOME</span>
             </button>
 
             <button
               type="submit"
-              className="neo-button bg-[#FF2E51] text-white px-7 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-[#e02445] w-full sm:w-auto"
+              className="neo-button bg-[#FF2E51] text-white px-8 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-[#e02445] w-full sm:w-auto"
             >
-              <span>{formData.registrationType === 'team' ? 'CONTINUE TO ADDITIONAL DETAILS' : 'CONTINUE TO REVIEW'}</span>
+              <span>NEXT</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -698,64 +620,8 @@ export const RegistrationPage = ({ onHome }) => {
       {/* STEP 2: ADDITIONAL DETAILS (TEAMMATE DETAILS) */}
       {currentStep === 2 && (
         <form onSubmit={handleProceedFromStep2} className="neo-box p-6 md:p-8 bg-[#FCFAF6] space-y-8">
-          {/* Stepper Header (Step 2 Active) */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 border-2 border-black p-1.5 bg-[#F6F3EB] shadow-neo-sm">
-            <div className="p-2.5 border-2 border-black/30 bg-[#FCFAF6] flex items-center gap-2.5">
-              <div className="w-6 h-6 shrink-0 flex items-center justify-center font-mono font-bold text-xs bg-emerald-600 text-white">
-                &check;
-              </div>
-              <div className="leading-tight overflow-hidden">
-                <div className="text-[11px] font-mono font-bold tracking-tight uppercase truncate text-black">
-                  PERSONAL DETAILS
-                </div>
-                <div className="text-[9px] font-mono text-gray-500 truncate">
-                  Completed
-                </div>
-              </div>
-            </div>
-
-            <div className="p-2.5 border-2 border-black bg-black text-white flex items-center gap-2.5 shadow-neo-sm">
-              <div className="w-6 h-6 shrink-0 flex items-center justify-center font-mono font-bold text-xs bg-[#FF2E51] text-white">
-                2
-              </div>
-              <div className="leading-tight overflow-hidden">
-                <div className="text-[11px] font-mono font-bold tracking-tight uppercase truncate text-white">
-                  ADDITIONAL DETAILS
-                </div>
-                <div className="text-[9px] font-mono text-gray-300 truncate">
-                  Active Step
-                </div>
-              </div>
-            </div>
-
-            <div className="p-2.5 border-2 border-black/30 bg-[#FCFAF6] flex items-center gap-2.5">
-              <div className="w-6 h-6 shrink-0 flex items-center justify-center font-mono font-bold text-xs bg-gray-200 text-black">
-                3
-              </div>
-              <div className="leading-tight overflow-hidden">
-                <div className="text-[11px] font-mono font-bold tracking-tight uppercase truncate text-black">
-                  REVIEW
-                </div>
-                <div className="text-[9px] font-mono text-gray-500 truncate">
-                  Pending
-                </div>
-              </div>
-            </div>
-
-            <div className="p-2.5 border-2 border-black/30 bg-[#FCFAF6] flex items-center gap-2.5">
-              <div className="w-6 h-6 shrink-0 flex items-center justify-center font-mono font-bold text-xs bg-gray-200 text-black">
-                4
-              </div>
-              <div className="leading-tight overflow-hidden">
-                <div className="text-[11px] font-mono font-bold tracking-tight uppercase truncate text-black">
-                  SUBMIT
-                </div>
-                <div className="text-[9px] font-mono text-gray-500 truncate">
-                  Final
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Stepper Header */}
+          <RegistrationStepper currentStep={2} isTeam={true} />
 
           {/* Section: Teammate Details */}
           <div className="space-y-6">
@@ -937,25 +803,25 @@ export const RegistrationPage = ({ onHome }) => {
               className="neo-button bg-white text-black px-5 py-2.5 text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-gray-100 w-full sm:w-auto"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>&larr; BACK TO MEMBER DETAILS</span>
+              <span>BACK TO MEMBER DETAILS</span>
             </button>
 
             <button
               type="submit"
-              className="neo-button bg-[#FF2E51] text-white px-7 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-[#e02445] w-full sm:w-auto"
+              className="neo-button bg-[#FF2E51] text-white px-8 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-[#e02445] w-full sm:w-auto"
             >
-              <span>CONTINUE TO REVIEW</span>
+              <span>NEXT</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </form>
       )}
 
-      {/* STEP 3: REVIEW DETAILS (Slide 2) */}
+      {/* STEP 3: EMAIL VERIFICATION (Slide 3) */}
       {currentStep === 3 && (
-        <ReviewStep
+        <OtpVerificationStep
           formData={formData}
-          onProceedToVerification={handleProceedToVerification}
+          onConfirmedSubmit={handleConfirmedSubmit}
           onBack={() => {
             setCurrentStep(formData.registrationType === 'team' ? 2 : 1);
             window.scrollTo({ top: 80, behavior: 'smooth' });
@@ -963,20 +829,8 @@ export const RegistrationPage = ({ onHome }) => {
         />
       )}
 
-      {/* STEP 4: EMAIL VERIFICATION (Slide 3) */}
+      {/* STEP 4: SUCCESS PASS (Slide 4 - "You're In, Crewmate") */}
       {currentStep === 4 && (
-        <OtpVerificationStep
-          formData={formData}
-          onConfirmedSubmit={handleConfirmedSubmit}
-          onBack={() => {
-            setCurrentStep(3);
-            window.scrollTo({ top: 80, behavior: 'smooth' });
-          }}
-        />
-      )}
-
-      {/* STEP 5: SUCCESS PASS (Slide 4 - "You're In, Crewmate") */}
-      {currentStep === 5 && (
         <SuccessStep
           registration={confirmedRegistration}
           onReset={handleReset}
