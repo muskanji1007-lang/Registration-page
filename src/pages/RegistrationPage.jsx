@@ -114,7 +114,7 @@ export const RegistrationPage = ({ onHome }) => {
     const name = formData.leader.fullName.trim();
     const num = formData.leader.studentNumber.trim();
 
-    if (name.length >= 2 && /^(?:24|25)\d{5,6}$/.test(num)) {
+    if (name.length >= 2 && /^(?:23|24|25)\d{5,6}$/.test(num)) {
       apiService
         .generateCollegeEmail(name, num)
         .then((res) => {
@@ -145,7 +145,7 @@ export const RegistrationPage = ({ onHome }) => {
     const name = formData.teammate.fullName.trim();
     const num = formData.teammate.studentNumber.trim();
 
-    if (name.length >= 2 && /^(?:24|25)\d{5,6}$/.test(num)) {
+    if (name.length >= 2 && /^(?:23|24|25)\d{5,6}$/.test(num)) {
       apiService
         .generateCollegeEmail(name, num)
         .then((res) => {
@@ -395,8 +395,8 @@ export const RegistrationPage = ({ onHome }) => {
     // 1. Validate Leader fields
     const errors = {};
     if (!formData.leader.fullName.trim()) errors.leader_fullName = 'Full Name is required';
-    if (!/^(?:24|25)\d{5,6}$/.test(formData.leader.studentNumber.trim())) {
-      errors.leader_studentNumber = 'Must start with 24 or 25 (7 or 8 digits)';
+    if (!/^(?:23|24|25)\d{5,6}$/.test(formData.leader.studentNumber.trim())) {
+      errors.leader_studentNumber = 'Must start with 23, 24, or 25 (7 or 8 digits)';
     }
     if (!/^[6-9]\d{9}$/.test(formData.leader.phone.trim())) {
       errors.leader_phone = '10-digit mobile starting with 6, 7, 8, or 9';
@@ -407,8 +407,8 @@ export const RegistrationPage = ({ onHome }) => {
     // 2. Validate Teammate fields (if Duo Squad)
     if (formData.registrationType === 'team') {
       if (!formData.teammate.fullName.trim()) errors.teammate_fullName = 'Teammate Full Name is required';
-      if (!/^(?:24|25)\d{5,6}$/.test(formData.teammate.studentNumber.trim())) {
-        errors.teammate_studentNumber = 'Must start with 24 or 25 (7 or 8 digits)';
+      if (!/^(?:23|24|25)\d{5,6}$/.test(formData.teammate.studentNumber.trim())) {
+        errors.teammate_studentNumber = 'Must start with 23, 24, or 25 (7 or 8 digits)';
       }
       if (formData.teammate.studentNumber.trim() === formData.leader.studentNumber.trim()) {
         errors.teammate_studentNumber = 'Teammate roll number cannot be the same as Leader';
@@ -628,7 +628,7 @@ export const RegistrationPage = ({ onHome }) => {
                 onChange={(e) => handleLeaderChange('studentNumber', e.target.value.replace(/\D/g, ''))}
                 placeholder="e.g. 24154046"
                 error={formErrors.leader_studentNumber}
-                helperText="Must start with 24 or 25 (7 or 8 digits)"
+                helperText="Must start with 23, 24, or 25 (7 or 8 digits)"
               />
 
               {/* Institutional College Email Preview */}
@@ -900,7 +900,7 @@ export const RegistrationPage = ({ onHome }) => {
                   }
                   placeholder="e.g. 2412214"
                   error={formErrors.teammate_studentNumber}
-                  helperText="Must start with 24 or 25 (7 or 8 digits)"
+                  helperText="Must start with 23, 24, or 25 (7 or 8 digits)"
                 />
 
                 <FormField

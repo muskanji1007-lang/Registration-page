@@ -9,7 +9,7 @@ export const AboutPage = ({ onRegisterClick, onRulesClick }) => {
       <div className="neo-card-interactive px-4 py-1.5 inline-flex items-center gap-2">
         <span className="w-2.5 h-2.5 bg-[#FF2E51]" />
         <span className="text-xs font-mono font-bold tracking-widest uppercase text-black">
-          CCC SOCIETY PRESENTS
+          CLOUD COMPUTING CELL PRESENTS
         </span>
       </div>
 
@@ -21,7 +21,7 @@ export const AboutPage = ({ onRegisterClick, onRulesClick }) => {
             PROTOCOL OVERVIEW
           </div>
           <p className="text-sm font-sans font-medium text-gray-800 leading-relaxed">
-            <strong className="text-black font-bold">DeBugX</strong> is a high-octane bug-hunting challenge engineered specifically for second-year students at <strong className="text-black font-bold">CCC, AKGEC</strong>.
+            <strong className="text-black font-bold">DeBugX</strong> is a high-octane bug-hunting challenge engineered specifically for 2nd and 3rd year students at <strong className="text-black font-bold">Cloud Computing Cell, AKGEC</strong>.
           </p>
           <p className="text-sm font-sans font-medium text-gray-700 leading-relaxed">
             Step inside the virtual mainframe to investigate intentionally fractured codebases, identify catastrophic logical anomalies, and put your analytical runtime instincts to the ultimate trial.
@@ -116,12 +116,12 @@ export const AboutPage = ({ onRegisterClick, onRulesClick }) => {
               </div>
               <h4 className="text-xs font-mono font-bold uppercase text-black">WHO CAN JOIN</h4>
               <p className="text-xs font-sans text-gray-700 leading-relaxed">
-                Second-year students at CCC, AKGEC. Tailored expressly for sophomore programmers ready to transition from pure syntax memorization to professional-grade code inspection, diagnostics, and patch deployment.
+                2nd and 3rd year students at Cloud Computing Cell, AKGEC. Tailored expressly for programmers ready to transition from pure syntax memorization to professional-grade code inspection, diagnostics, and patch deployment.
               </p>
             </div>
             <div className="p-3 bg-[#F4EFE6] border-t-2 border-black text-[10px] font-mono font-bold text-gray-800 flex items-center justify-between">
-              <span>TARGET BATCH: 2ND YEAR</span>
-              <span className="text-black">CCC AKGEC ONLY</span>
+              <span>TARGET BATCH: 2ND &amp; 3RD YEAR</span>
+              <span className="text-black">CLOUD COMPUTING CELL</span>
             </div>
           </div>
 
@@ -211,7 +211,7 @@ export const AboutPage = ({ onRegisterClick, onRulesClick }) => {
                 TIMED ROUNDS
               </div>
               <p className="text-xs font-sans text-gray-700 leading-relaxed">
-                <strong className="text-black font-mono">03</strong> High-velocity elimination sprints where speed, patch accuracy, and comprehensive test-case passing determine who ascends the CCC AKGEC leaderboard. Every penalty commit costs precious ranking points.
+                <strong className="text-black font-mono">03</strong> High-velocity elimination sprints where speed, patch accuracy, and comprehensive test-case passing determine who ascends the Cloud Computing Cell leaderboard. Every penalty commit costs precious ranking points.
               </p>
             </div>
             <div className="shrink-0">

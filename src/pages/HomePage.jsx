@@ -11,7 +11,7 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
       <div className="neo-card-interactive px-4 py-1.5 inline-flex items-center gap-2">
         <span className="w-2.5 h-2.5 bg-[#FF2E51]" />
         <span className="text-xs font-mono font-bold tracking-widest uppercase text-black">
-          CCC SOCIETY PRESENTS
+          CLOUD COMPUTING CELL PRESENTS
         </span>
       </div>
 
@@ -65,7 +65,7 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
             <div className="pt-2">
               <span className="text-xs font-mono font-bold px-2.5 py-1 bg-emerald-100 text-emerald-800 border border-black shadow-neo-sm inline-flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                100% FREE ENTRY • EXCLUSIVELY FOR 2ND-YEAR AKGEC STUDENTS
+                100% FREE ENTRY • FOR 2ND & 3RD YEAR AKGEC STUDENTS
               </span>
             </div>
           </div>
@@ -105,7 +105,7 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
             <GraduationCap className="w-4 h-4 text-[#FF2E51]" />
           </div>
           <div className="font-extrabold text-sm sm:text-base text-black font-display">
-            2nd-Year Students
+            2nd & 3rd Year Students
           </div>
           <div className="text-xs text-gray-500 font-mono">AKGEC Campus Only</div>
         </div>
@@ -141,9 +141,9 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
             <MapPin className="w-4 h-4 text-[#FF2E51]" />
           </div>
           <div className="font-extrabold text-sm sm:text-base text-black font-display">
-            CCC Lab
+            CSIT 3rd Floor
           </div>
-          <div className="text-xs text-gray-500 font-mono">3rd Floor</div>
+          <div className="text-xs text-gray-500 font-mono">AKGEC Campus</div>
         </div>
       </div>
     </div>

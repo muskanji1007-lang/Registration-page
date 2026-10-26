@@ -9,7 +9,7 @@ export const FaqPage = ({ onRegisterClick, onHome }) => {
   const faqs = [
     {
       q: 'Who can participate?',
-      a: 'Eligibility will follow the official event announcement. Confirm the 2nd year eligibility criteria with the organisers. Valid student roll numbers starting with 24 or 25 are required.',
+      a: 'Open to 2nd and 3rd year students of AKGEC. Valid student numbers starting with 23, 24, or 25 are eligible.',
     },
     {
       q: 'Is participation individual or team-based?',
@@ -21,11 +21,11 @@ export const FaqPage = ({ onRegisterClick, onHome }) => {
     },
     {
       q: 'When and where will the event take place?',
-      a: 'The physical competition will take place on 30th October from 4:00 PM to 7:00 PM at the CSIT Seminar Hall, AKGEC Campus.',
+      a: 'The physical competition will take place on 30th October from 4:00 PM to 7:00 PM at CSIT 3rd Floor, AKGEC Campus.',
     },
     {
       q: 'Still have questions?',
-      a: 'Reach out directly to the Cloud Computing Cell (CCC) student coordinators or visit the CCC Lab on the 3rd Floor for any queries.',
+      a: 'Reach out directly to the Cloud Computing Cell student coordinators or visit CSIT 3rd Floor for any queries.',
     },
   ];
 

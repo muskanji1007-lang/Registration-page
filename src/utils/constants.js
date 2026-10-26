@@ -20,7 +20,7 @@ export const RESIDENCE_TYPES = [
   { value: 'Day Scholar', label: 'DAY SCHOLAR', description: 'Commuting from home/PG' },
 ];
 
-export const STUDENT_NUMBER_REGEX = /^(?:24|25)\d{5,6}$/;
+export const STUDENT_NUMBER_REGEX = /^(?:23|24|25)\d{5,6}$/;
 export const PHONE_REGEX = /^[6-9]\d{9}$/;
 export const NAME_REGEX = /^[a-zA-Z\s]{2,100}$/;
 

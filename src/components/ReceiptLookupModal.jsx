@@ -135,7 +135,7 @@ export const ReceiptLookupModal = ({ isOpen, onClose }) => {
             </div>
 
             <div className="pt-2 border-t border-gray-200 flex items-center justify-between">
-              <span className="text-[10px] text-gray-500">Venue: CCC Lab, 3rd Floor</span>
+              <span className="text-[10px] text-gray-500">Venue: CSIT 3rd Floor</span>
               <button
                 type="button"
                 onClick={() => window.print()}

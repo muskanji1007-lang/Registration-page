@@ -19,10 +19,10 @@ export const validateParticipant = (participant, prefix = '') => {
     errors[`${prefix}studentNumber`] = 'Student number is required';
   } else if (!/^\d+$/.test(studentNum)) {
     errors[`${prefix}studentNumber`] = 'Student number must contain digits only';
-  } else if (!studentNum.startsWith('24') && !studentNum.startsWith('25')) {
-    errors[`${prefix}studentNumber`] = 'Student number must start with 24 or 25.';
+  } else if (!studentNum.startsWith('23') && !studentNum.startsWith('24') && !studentNum.startsWith('25')) {
+    errors[`${prefix}studentNumber`] = 'Student number must start with 23, 24, or 25.';
   } else if (!STUDENT_NUMBER_REGEX.test(studentNum)) {
-    errors[`${prefix}studentNumber`] = 'Student number must start with 24 or 25 and be 7 or 8 digits.';
+    errors[`${prefix}studentNumber`] = 'Student number must start with 23, 24, or 25 and be 7 or 8 digits.';
   }
 
   // Phone validation

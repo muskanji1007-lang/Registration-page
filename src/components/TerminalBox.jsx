@@ -22,7 +22,7 @@ export const TerminalBox = () => {
           SAVE THE CODE.
         </h4>
         <p className="text-xs text-gray-600 leading-relaxed font-sans font-medium">
-          A high-velocity code auditing and glitch elimination challenge for 2nd-year developers at CCC, AKGEC.
+          A high-velocity code auditing and glitch elimination challenge for 2nd & 3rd year developers at Cloud Computing Cell, AKGEC.
         </p>
       </div>
 
