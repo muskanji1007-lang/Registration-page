@@ -613,11 +613,11 @@ export const OtpVerificationStep = ({
       )}
 
       {/* Red Bottom Button (Matching Slide 3 "CONTINUE TO PAYMENT ->" / "CONFIRM & SUBMIT ->") */}
-      <div className="max-w-xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+      <div className="max-w-xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 pt-2">
         <button
           type="button"
           onClick={onBack}
-          className="neo-button bg-white text-black px-5 py-2.5 text-xs font-mono font-bold tracking-wider uppercase hover:bg-gray-100 flex items-center gap-2"
+          className="neo-button bg-white text-black px-5 py-2.5 text-xs font-mono font-bold tracking-wider uppercase hover:bg-gray-100 flex items-center justify-center gap-2 w-full sm:w-auto"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>EDIT REVIEW</span>

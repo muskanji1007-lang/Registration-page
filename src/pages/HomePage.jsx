@@ -20,7 +20,7 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b-2 border-black/10">
           {/* Stylized DeBugX Logo Typography with Halftone Pattern */}
           <div className="relative select-none">
-            <div className="flex items-baseline font-display font-extrabold text-5xl sm:text-7xl md:text-8xl tracking-tighter italic">
+            <div className="flex items-baseline font-display font-extrabold text-4xl sm:text-7xl md:text-8xl tracking-tighter italic">
               {/* DeBug */}
               <div className="relative text-black">
                 <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-b from-gray-900 to-black stroke-black">
@@ -101,10 +101,10 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
         </div>
 
         {/* Action Buttons Row */}
-        <div className="flex flex-wrap items-center gap-4 pt-6 border-t-2 border-black/10">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-6 border-t-2 border-black/10">
           <button
             onClick={onRegisterClick}
-            className="neo-button bg-[#FF2E51] text-white px-6 py-3 text-sm sm:text-base font-mono font-bold tracking-wider uppercase flex items-center gap-2 hover:bg-[#e02445]"
+            className="neo-button bg-[#FF2E51] text-white px-6 py-3 text-sm sm:text-base font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-[#e02445] w-full sm:w-auto"
           >
             <span>JOIN THE HUNT</span>
             <ArrowRight className="w-5 h-5" />
@@ -112,7 +112,7 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
 
           <button
             onClick={onRulesClick}
-            className="neo-button bg-white text-black px-6 py-3 text-sm sm:text-base font-mono font-bold tracking-wider uppercase flex items-center gap-2 hover:bg-gray-100"
+            className="neo-button bg-white text-black px-6 py-3 text-sm sm:text-base font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-gray-100 w-full sm:w-auto"
           >
             <span>RULES & PROTOCOL</span>
             <ChevronDown className="w-5 h-5" />

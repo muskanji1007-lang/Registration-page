@@ -78,7 +78,7 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick }) => {
           </nav>
 
           {/* Right CTA and Icons */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3">
             {/* Backend Health Badge */}
             <div className="hidden lg:flex items-center gap-1.5 px-2 py-1 text-[11px] font-mono border border-black/30 bg-white">
               <span
@@ -103,17 +103,18 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick }) => {
             {activePage !== 'register' ? (
               <button
                 onClick={() => setActivePage('register')}
-                className="neo-button bg-[#FF2E51] text-white px-4 py-1.5 text-xs font-mono tracking-wider uppercase flex items-center gap-1.5 hover:bg-[#e02445]"
+                className="neo-button bg-[#FF2E51] text-white px-2.5 sm:px-4 py-1.5 text-[11px] sm:text-xs font-mono tracking-wider uppercase flex items-center gap-1.5 hover:bg-[#e02445] whitespace-nowrap"
               >
-                <span>REGISTER NOW</span>
+                <span className="hidden sm:inline">REGISTER NOW</span>
+                <span className="sm:hidden">REGISTER</span>
               </button>
             ) : (
               <button
                 onClick={() => setActivePage('home')}
-                className="neo-button bg-white text-black px-3 py-1.5 text-xs font-mono tracking-wider uppercase flex items-center gap-1.5 hover:bg-gray-50"
+                className="neo-button bg-white text-black px-2.5 sm:px-3 py-1.5 text-[11px] sm:text-xs font-mono tracking-wider uppercase flex items-center gap-1.5 hover:bg-gray-50"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">HOME</span>
+                <span>HOME</span>
               </button>
             )}
 

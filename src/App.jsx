@@ -12,7 +12,7 @@ export const App = () => {
   const [isLookupOpen, setIsLookupOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#F6F3EB] text-[#000000] flex flex-col justify-between selection:bg-[#FF2E51] selection:text-white">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#F6F3EB] text-[#000000] flex flex-col justify-between selection:bg-[#FF2E51] selection:text-white">
       {/* Top Navigation */}
       <Navbar
         activePage={activePage}

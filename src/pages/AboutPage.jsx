@@ -233,10 +233,10 @@ export const AboutPage = ({ onRegisterClick, onRulesClick }) => {
           Put your debugging skills to the test.
         </p>
 
-        <div className="flex flex-wrap items-center gap-4 pt-2">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 pt-2">
           <button
             onClick={onRegisterClick}
-            className="neo-button bg-[#FF2E51] text-white px-6 py-2.5 text-xs font-mono font-bold tracking-wider uppercase flex items-center gap-2 hover:bg-[#e02445]"
+            className="neo-button bg-[#FF2E51] text-white px-6 py-2.5 text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-[#e02445] w-full sm:w-auto"
           >
             <span>JOIN THE HUNT</span>
             <ArrowRight className="w-4 h-4" />
@@ -244,7 +244,7 @@ export const AboutPage = ({ onRegisterClick, onRulesClick }) => {
 
           <button
             onClick={onRulesClick}
-            className="neo-button bg-white text-black px-6 py-2.5 text-xs font-mono font-bold tracking-wider uppercase flex items-center gap-2 hover:bg-gray-100"
+            className="neo-button bg-white text-black px-6 py-2.5 text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-gray-100 w-full sm:w-auto"
           >
             <span>VIEW THE RULES</span>
             <ChevronDown className="w-4 h-4" />

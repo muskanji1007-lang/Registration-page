@@ -208,11 +208,11 @@ export const ReviewStep = ({
       </div>
 
       {/* Red Action Button (Exact match to Slide 2) */}
-      <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div className="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
         <button
           type="button"
           onClick={onBack}
-          className="neo-button bg-white text-black px-6 py-2.5 text-xs font-mono font-bold tracking-wider uppercase hover:bg-gray-100 flex items-center gap-2"
+          className="neo-button bg-white text-black px-6 py-2.5 text-xs font-mono font-bold tracking-wider uppercase hover:bg-gray-100 flex items-center justify-center gap-2 w-full sm:w-auto"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>BACK TO DETAILS</span>
@@ -221,7 +221,7 @@ export const ReviewStep = ({
         <button
           type="button"
           onClick={onProceedToVerification}
-          className="neo-button bg-[#FF2E51] text-white px-8 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase flex items-center gap-2 hover:bg-[#e02445]"
+          className="neo-button bg-[#FF2E51] text-white px-8 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-[#e02445] w-full sm:w-auto"
         >
           <span>CONTINUE TO EMAIL VERIFICATION</span>
           <ArrowRight className="w-4 h-4" />

@@ -674,11 +674,11 @@ export const RegistrationPage = ({ onHome }) => {
           </div>
 
           {/* Bottom Action Buttons (Matching Slide 1) */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t-2 border-black/10">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 pt-4 border-t-2 border-black/10">
             <button
               type="button"
               onClick={onHome}
-              className="neo-button bg-white text-black px-5 py-2.5 text-xs font-mono font-bold tracking-wider uppercase flex items-center gap-2 hover:bg-gray-100"
+              className="neo-button bg-white text-black px-5 py-2.5 text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-gray-100 w-full sm:w-auto"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>&larr; BACK TO HOME</span>
@@ -686,7 +686,7 @@ export const RegistrationPage = ({ onHome }) => {
 
             <button
               type="submit"
-              className="neo-button bg-[#FF2E51] text-white px-7 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase flex items-center gap-2 hover:bg-[#e02445]"
+              className="neo-button bg-[#FF2E51] text-white px-7 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-[#e02445] w-full sm:w-auto"
             >
               <span>{formData.registrationType === 'team' ? 'CONTINUE TO ADDITIONAL DETAILS' : 'CONTINUE TO REVIEW'}</span>
               <ArrowRight className="w-4 h-4" />
@@ -930,11 +930,11 @@ export const RegistrationPage = ({ onHome }) => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t-2 border-black/10">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 pt-4 border-t-2 border-black/10">
             <button
               type="button"
               onClick={() => setCurrentStep(1)}
-              className="neo-button bg-white text-black px-5 py-2.5 text-xs font-mono font-bold tracking-wider uppercase flex items-center gap-2 hover:bg-gray-100"
+              className="neo-button bg-white text-black px-5 py-2.5 text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-gray-100 w-full sm:w-auto"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>&larr; BACK TO MEMBER DETAILS</span>
@@ -942,7 +942,7 @@ export const RegistrationPage = ({ onHome }) => {
 
             <button
               type="submit"
-              className="neo-button bg-[#FF2E51] text-white px-7 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase flex items-center gap-2 hover:bg-[#e02445]"
+              className="neo-button bg-[#FF2E51] text-white px-7 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-[#e02445] w-full sm:w-auto"
             >
               <span>CONTINUE TO REVIEW</span>
               <ArrowRight className="w-4 h-4" />
