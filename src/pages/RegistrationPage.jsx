@@ -1080,32 +1080,67 @@ export const RegistrationPage = ({ onHome }) => {
                 </strong>
               </div>
 
-              {!leaderOtpSent && !leaderVerified ? (
-                <div className="space-y-3">
-                  <p className="text-xs font-sans text-gray-600 leading-relaxed">
-                    Solve the security check below to receive your 6-digit verification code.
-                  </p>
+              {leaderVerified ? (
+                <div className="p-4 bg-emerald-50 border-2 border-emerald-500 rounded text-emerald-900 font-mono text-xs flex items-center gap-3">
+                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                  <div>
+                    <span className="font-bold text-sm block">Email Verified Successfully!</span>
+                    <span>{formData.leader.collegeEmail} is authorized.</span>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  {/* Step A: Security Challenge & Send OTP */}
+                  <div className="space-y-3">
+                    <p className="text-xs font-sans text-gray-600 leading-relaxed">
+                      Complete the security check below, then click Send OTP to dispatch your 6-digit code.
+                    </p>
 
-                  <div className="flex justify-center py-1">
-                    <TurnstileWidget
-                      ref={leaderTurnstileRef}
-                      onVerify={(token) => {
-                        setLeaderToken(token);
-                        setLeaderError('');
-                      }}
-                      onSuccess={(token) => {
-                        setLeaderToken(token);
-                        setLeaderError('');
-                      }}
-                      onError={(err) => setLeaderError(err || 'Security check failed. Please refresh or retry.')}
-                      onExpire={() => setLeaderToken('')}
-                    />
+                    <div className="flex justify-center py-1">
+                      <TurnstileWidget
+                        ref={leaderTurnstileRef}
+                        onVerify={(token) => {
+                          setLeaderToken(token);
+                          setLeaderError('');
+                        }}
+                        onSuccess={(token) => {
+                          setLeaderToken(token);
+                          setLeaderError('');
+                        }}
+                        onError={(err) => setLeaderError(err || 'Security check failed. Please refresh or retry.')}
+                        onExpire={() => setLeaderToken('')}
+                        label="Security Verification"
+                      />
+                    </div>
+
+                    {leaderToken && (
+                      <div className="p-2 bg-emerald-50 border border-emerald-400 text-emerald-800 font-mono text-xs font-bold flex items-center justify-center gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Security Verification Passed! Ready to send OTP.</span>
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => handleSendLeaderOtp(leaderOtpSent)}
+                      disabled={leaderLoading}
+                      className="w-full neo-button bg-[#FF2E51] text-white py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-[#e02445]"
+                    >
+                      {leaderLoading ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <span>SENDING OTP...</span>
+                        </>
+                      ) : (
+                        <span>{leaderOtpSent ? 'RESEND VERIFICATION OTP' : 'SEND VERIFICATION OTP'}</span>
+                      )}
+                    </button>
                   </div>
 
-                  {leaderToken && (
-                    <div className="p-2 bg-emerald-50 border border-emerald-400 text-emerald-800 font-mono text-xs font-bold flex items-center justify-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>Security Verification Passed! Ready to send OTP.</span>
+                  {leaderSuccess && (
+                    <div className="p-2.5 bg-emerald-50 border border-emerald-500 text-emerald-800 font-mono text-xs font-bold flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                      <span>{leaderSuccess}</span>
                     </div>
                   )}
 
@@ -1116,136 +1151,52 @@ export const RegistrationPage = ({ onHome }) => {
                     </div>
                   )}
 
-                  <button
-                    type="button"
-                    onClick={() => handleSendLeaderOtp(false)}
-                    disabled={leaderLoading}
-                    className="w-full neo-button bg-[#FF2E51] text-white py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-[#e02445]"
-                  >
-                    {leaderLoading ? (
-                      <>
-                        <RefreshCw className="w-4 h-4 animate-spin" />
-                        <span>SENDING OTP...</span>
-                      </>
-                    ) : (
-                      <span>SEND VERIFICATION OTP</span>
-                    )}
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-4 pt-1">
-                  {leaderSuccess && (
-                    <div className="p-2.5 bg-emerald-50 border border-emerald-500 text-emerald-800 font-mono text-xs font-bold flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-                      <span>{leaderSuccess}</span>
-                    </div>
-                  )}
-
-                  {!leaderVerified && (
-                    <div className="space-y-3">
+                  {/* Step B: 6-Digit OTP Input Field (ALWAYS VISIBLE) */}
+                  <div className="pt-4 border-t-2 border-black/10 space-y-3">
+                    <div className="flex items-center justify-between">
                       <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
                         ENTER 6-DIGIT OTP CODE
                       </label>
-                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                        <input
-                          type="text"
-                          inputMode="numeric"
-                          maxLength={6}
-                          value={leaderOtp}
-                          onChange={(e) => setLeaderOtp(e.target.value.replace(/\D/g, ''))}
-                          placeholder="••••••"
-                          className="bg-white border-2 border-black text-black font-mono text-xl tracking-[0.3em] px-4 py-2 text-center w-full sm:w-48 focus:outline-none focus:border-[#FF2E51]"
-                          autoFocus
-                        />
-                        <button
-                          type="button"
-                          onClick={handleVerifyLeaderOtp}
-                          disabled={leaderLoading || leaderOtp.trim().length !== 6}
-                          className="neo-button bg-black text-white px-6 py-2.5 text-xs font-mono font-bold uppercase tracking-wider hover:bg-gray-800 disabled:opacity-50 flex items-center justify-center gap-2"
-                        >
-                          {leaderLoading ? (
-                            <>
-                              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                              <span>VERIFYING...</span>
-                            </>
-                          ) : (
-                            <span>VERIFY CODE →</span>
-                          )}
-                        </button>
-                      </div>
-
-                      {leaderError && (
-                        <div className="p-3 bg-red-50 border-2 border-[#FF2E51] text-[#FF2E51] font-mono text-xs font-bold flex items-center gap-2">
-                          <AlertCircle className="w-4 h-4 shrink-0" />
-                          <span>{leaderError}</span>
-                        </div>
+                      {leaderOtpSent && leaderCooldown > 0 && (
+                        <span className="text-[11px] font-mono text-gray-500">
+                          Resend cooldown: {leaderCooldown}s
+                        </span>
                       )}
-
-                      <div className="p-3 bg-gray-50 border border-gray-200 rounded space-y-3">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] font-mono">
-                          <span className="text-gray-600">Didn't receive email? Check spam folder first.</span>
-                          <span className="font-bold text-black">
-                            {leaderCooldown > 0 ? `Resend in ${leaderCooldown}s` : 'Resend available'}
-                          </span>
-                        </div>
-
-                        {leaderCooldown === 0 && (
-                          <div className="space-y-2 pt-2 border-t border-gray-200">
-                            <p className="text-[11px] text-amber-900 font-sans">
-                              Note: Requesting a new code will immediately invalidate previous codes. Solve the security box below to resend:
-                            </p>
-                            <TurnstileWidget
-                              ref={leaderTurnstileRef}
-                              onVerify={(token) => {
-                                setLeaderToken(token);
-                                setLeaderError('');
-                              }}
-                              onSuccess={(token) => {
-                                setLeaderToken(token);
-                                setLeaderError('');
-                              }}
-                              onError={(err) => setLeaderError(err || 'Security check failed. Please refresh or retry.')}
-                              onExpire={() => setLeaderToken('')}
-                              label="Security Check to Resend"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => handleSendLeaderOtp(true)}
-                              disabled={leaderLoading || !leaderToken}
-                              className="w-full neo-button bg-gray-900 text-white py-2 text-xs font-mono font-bold uppercase tracking-wider disabled:opacity-50 hover:bg-black flex items-center justify-center gap-2"
-                            >
-                              {leaderLoading ? (
-                                <>
-                                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                                  <span>RESENDING OTP...</span>
-                                </>
-                              ) : (
-                                <>
-                                  <RefreshCw className="w-3.5 h-3.5" />
-                                  <span>RESEND NEW OTP CODE</span>
-                                </>
-                              )}
-                            </button>
-                          </div>
-                        )}
-
-                        <div className="pt-1">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setLeaderOtpSent(false);
-                              setLeaderToken('');
-                              setLeaderOtp('');
-                              setLeaderError('');
-                            }}
-                            className="text-[11px] font-mono text-gray-500 hover:text-black underline"
-                          >
-                            ← Change details or re-verify
-                          </button>
-                        </div>
-                      </div>
                     </div>
-                  )}
+
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={6}
+                        value={leaderOtp}
+                        onChange={(e) => setLeaderOtp(e.target.value.replace(/\D/g, ''))}
+                        placeholder="••••••"
+                        className="bg-white border-2 border-black text-black font-mono text-xl tracking-[0.3em] px-4 py-2 text-center w-full sm:w-48 focus:outline-none focus:border-[#FF2E51]"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleVerifyLeaderOtp}
+                        disabled={leaderLoading || leaderOtp.trim().length !== 6}
+                        className="neo-button bg-black text-white px-6 py-2.5 text-xs font-mono font-bold uppercase tracking-wider hover:bg-gray-800 disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        {leaderLoading ? (
+                          <>
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                            <span>VERIFYING...</span>
+                          </>
+                        ) : (
+                          <span>VERIFY CODE →</span>
+                        )}
+                      </button>
+                    </div>
+
+                    <p className="text-[11px] font-sans text-gray-500">
+                      {leaderOtpSent
+                        ? 'Enter the 6-digit verification code sent to your official email. Valid for 10 minutes (check Spam folder).'
+                        : 'First complete the security challenge and click SEND VERIFICATION OTP above, then enter your 6-digit code here.'}
+                    </p>
+                  </div>
                 </div>
               )}
             </div>
@@ -1276,32 +1227,67 @@ export const RegistrationPage = ({ onHome }) => {
                   </strong>
                 </div>
 
-                {!teammateOtpSent && !teammateVerified ? (
-                  <div className="space-y-3">
-                    <p className="text-xs font-sans text-gray-600 leading-relaxed">
-                      Solve the security check below to receive teammate verification code.
-                    </p>
+                {teammateVerified ? (
+                  <div className="p-4 bg-emerald-50 border-2 border-emerald-500 rounded text-emerald-900 font-mono text-xs flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                    <div>
+                      <span className="font-bold text-sm block">Teammate Email Verified Successfully!</span>
+                      <span>{formData.teammate.collegeEmail} is authorized.</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-5">
+                    {/* Step A: Security Challenge & Send OTP */}
+                    <div className="space-y-3">
+                      <p className="text-xs font-sans text-gray-600 leading-relaxed">
+                        Complete teammate security check below, then click Send OTP to dispatch 6-digit code.
+                      </p>
 
-                    <div className="flex justify-center py-1">
-                      <TurnstileWidget
-                        ref={teammateTurnstileRef}
-                        onVerify={(token) => {
-                          setTeammateToken(token);
-                          setTeammateError('');
-                        }}
-                        onSuccess={(token) => {
-                          setTeammateToken(token);
-                          setTeammateError('');
-                        }}
-                        onError={(err) => setTeammateError(err || 'Security check failed. Please refresh or retry.')}
-                        onExpire={() => setTeammateToken('')}
-                      />
+                      <div className="flex justify-center py-1">
+                        <TurnstileWidget
+                          ref={teammateTurnstileRef}
+                          onVerify={(token) => {
+                            setTeammateToken(token);
+                            setTeammateError('');
+                          }}
+                          onSuccess={(token) => {
+                            setTeammateToken(token);
+                            setTeammateError('');
+                          }}
+                          onError={(err) => setTeammateError(err || 'Security check failed. Please refresh or retry.')}
+                          onExpire={() => setTeammateToken('')}
+                          label="Teammate Security Verification"
+                        />
+                      </div>
+
+                      {teammateToken && (
+                        <div className="p-2 bg-emerald-50 border border-emerald-400 text-emerald-800 font-mono text-xs font-bold flex items-center justify-center gap-1.5">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Teammate Security Verification Passed! Ready to send OTP.</span>
+                        </div>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => handleSendTeammateOtp(teammateOtpSent)}
+                        disabled={teammateLoading}
+                        className="w-full neo-button bg-[#FF2E51] text-white py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-[#e02445]"
+                      >
+                        {teammateLoading ? (
+                          <>
+                            <RefreshCw className="w-4 h-4 animate-spin" />
+                            <span>SENDING TEAMMATE OTP...</span>
+                          </>
+                        ) : (
+                          <span>{teammateOtpSent ? 'RESEND TEAMMATE OTP' : 'SEND TEAMMATE VERIFICATION OTP'}</span>
+                        )}
+                      </button>
                     </div>
 
-                    {teammateToken && (
-                      <div className="p-2 bg-emerald-50 border border-emerald-400 text-emerald-800 font-mono text-xs font-bold flex items-center justify-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>Teammate Security Verification Passed! Ready to send OTP.</span>
+                    {teammateSuccess && (
+                      <div className="p-2.5 bg-emerald-50 border border-emerald-500 text-emerald-800 font-mono text-xs font-bold flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                        <span>{teammateSuccess}</span>
                       </div>
                     )}
 
@@ -1312,135 +1298,52 @@ export const RegistrationPage = ({ onHome }) => {
                       </div>
                     )}
 
-                    <button
-                      type="button"
-                      onClick={() => handleSendTeammateOtp(false)}
-                      disabled={teammateLoading}
-                      className="w-full neo-button bg-[#FF2E51] text-white py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-[#e02445]"
-                    >
-                      {teammateLoading ? (
-                        <>
-                          <RefreshCw className="w-4 h-4 animate-spin" />
-                          <span>SENDING TEAMMATE OTP...</span>
-                        </>
-                      ) : (
-                        <span>SEND TEAMMATE VERIFICATION OTP</span>
-                      )}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-4 pt-1">
-                    {teammateSuccess && (
-                      <div className="p-2.5 bg-emerald-50 border border-emerald-500 text-emerald-800 font-mono text-xs font-bold flex items-center gap-2">
-                        <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
-                        <span>{teammateSuccess}</span>
-                      </div>
-                    )}
-
-                    {!teammateVerified && (
-                      <div className="space-y-3">
+                    {/* Step B: 6-Digit OTP Input Field (ALWAYS VISIBLE) */}
+                    <div className="pt-4 border-t-2 border-black/10 space-y-3">
+                      <div className="flex items-center justify-between">
                         <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
                           ENTER TEAMMATE 6-DIGIT OTP CODE
                         </label>
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                          <input
-                            type="text"
-                            inputMode="numeric"
-                            maxLength={6}
-                            value={teammateOtp}
-                            onChange={(e) => setTeammateOtp(e.target.value.replace(/\D/g, ''))}
-                            placeholder="••••••"
-                            className="bg-white border-2 border-black text-black font-mono text-xl tracking-[0.3em] px-4 py-2 text-center w-full sm:w-48 focus:outline-none focus:border-[#FF2E51]"
-                          />
-                          <button
-                            type="button"
-                            onClick={handleVerifyTeammateOtp}
-                            disabled={teammateLoading || teammateOtp.trim().length !== 6}
-                            className="neo-button bg-black text-white px-6 py-2.5 text-xs font-mono font-bold uppercase tracking-wider hover:bg-gray-800 disabled:opacity-50 flex items-center justify-center gap-2"
-                          >
-                            {teammateLoading ? (
-                              <>
-                                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                                <span>VERIFYING...</span>
-                              </>
-                            ) : (
-                              <span>VERIFY CODE →</span>
-                            )}
-                          </button>
-                        </div>
-
-                        {teammateError && (
-                          <div className="p-3 bg-red-50 border-2 border-[#FF2E51] text-[#FF2E51] font-mono text-xs font-bold flex items-center gap-2">
-                            <AlertCircle className="w-4 h-4 shrink-0" />
-                            <span>{teammateError}</span>
-                          </div>
+                        {teammateOtpSent && teammateCooldown > 0 && (
+                          <span className="text-[11px] font-mono text-gray-500">
+                            Resend cooldown: {teammateCooldown}s
+                          </span>
                         )}
-
-                        <div className="p-3 bg-gray-50 border border-gray-200 rounded space-y-3">
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] font-mono">
-                            <span className="text-gray-600">Didn't receive email? Check spam folder first.</span>
-                            <span className="font-bold text-black">
-                              {teammateCooldown > 0 ? `Resend in ${teammateCooldown}s` : 'Resend available'}
-                            </span>
-                          </div>
-
-                          {teammateCooldown === 0 && (
-                            <div className="space-y-2 pt-2 border-t border-gray-200">
-                              <p className="text-[11px] text-amber-900 font-sans">
-                                Note: Requesting a new code will immediately invalidate previous codes. Solve the security box below to resend:
-                              </p>
-                              <TurnstileWidget
-                                ref={teammateTurnstileRef}
-                                onVerify={(token) => {
-                                  setTeammateToken(token);
-                                  setTeammateError('');
-                                }}
-                                onSuccess={(token) => {
-                                  setTeammateToken(token);
-                                  setTeammateError('');
-                                }}
-                                onError={(err) => setTeammateError(err || 'Security check failed. Please refresh or retry.')}
-                                onExpire={() => setTeammateToken('')}
-                                label="Security Check to Resend"
-                              />
-                              <button
-                                type="button"
-                                onClick={() => handleSendTeammateOtp(true)}
-                                disabled={teammateLoading || !teammateToken}
-                                className="w-full neo-button bg-gray-900 text-white py-2 text-xs font-mono font-bold uppercase tracking-wider disabled:opacity-50 hover:bg-black flex items-center justify-center gap-2"
-                              >
-                                {teammateLoading ? (
-                                  <>
-                                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                                    <span>RESENDING OTP...</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <RefreshCw className="w-3.5 h-3.5" />
-                                    <span>RESEND TEAMMATE OTP</span>
-                                  </>
-                                )}
-                              </button>
-                            </div>
-                          )}
-
-                          <div className="pt-1">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setTeammateOtpSent(false);
-                                setTeammateToken('');
-                                setTeammateOtp('');
-                                setTeammateError('');
-                              }}
-                              className="text-[11px] font-mono text-gray-500 hover:text-black underline"
-                            >
-                              ← Change teammate details or re-verify
-                            </button>
-                          </div>
-                        </div>
                       </div>
-                    )}
+
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={6}
+                          value={teammateOtp}
+                          onChange={(e) => setTeammateOtp(e.target.value.replace(/\D/g, ''))}
+                          placeholder="••••••"
+                          className="bg-white border-2 border-black text-black font-mono text-xl tracking-[0.3em] px-4 py-2 text-center w-full sm:w-48 focus:outline-none focus:border-[#FF2E51]"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleVerifyTeammateOtp}
+                          disabled={teammateLoading || teammateOtp.trim().length !== 6}
+                          className="neo-button bg-black text-white px-6 py-2.5 text-xs font-mono font-bold uppercase tracking-wider hover:bg-gray-800 disabled:opacity-50 flex items-center justify-center gap-2"
+                        >
+                          {teammateLoading ? (
+                            <>
+                              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                              <span>VERIFYING...</span>
+                            </>
+                          ) : (
+                            <span>VERIFY CODE →</span>
+                          )}
+                        </button>
+                      </div>
+
+                      <p className="text-[11px] font-sans text-gray-500">
+                        {teammateOtpSent
+                          ? 'Enter the 6-digit verification code sent to teammate official email. Valid for 10 minutes (check Spam folder).'
+                          : 'First complete teammate security challenge and click SEND TEAMMATE OTP above, then enter the 6-digit code here.'}
+                      </p>
+                    </div>
                   </div>
                 )}
               </div>

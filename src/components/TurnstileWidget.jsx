@@ -63,6 +63,8 @@ const TurnstileWidget = forwardRef(({ onVerify, onSuccess, onExpire, onError, la
           let friendlyMsg = `Cloudflare security challenge failed (Code: ${errorCode || 'unknown'}).`;
           if (errorCode === '110200') {
             friendlyMsg = `Domain Authorization Error (110200): "${window.location.hostname}" is not added to allowed hostnames in Cloudflare Turnstile dashboard.`;
+          } else if (errorCode === '400020') {
+            friendlyMsg = `Invalid Sitekey (400020): This Cloudflare Site Key is not recognized or not allowed on "${window.location.hostname}". Please update with the active site key from Navya.`;
           } else if (errorCode === '300030') {
             friendlyMsg = 'Verification challenge timed out. Please click Reload below.';
           }
