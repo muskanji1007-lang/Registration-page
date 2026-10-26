@@ -1,23 +1,13 @@
 import React from 'react';
 
-export const RegistrationStepper = ({ currentStep, isTeam }) => {
-  const steps = isTeam
-    ? [
-        { num: 1, title: 'LEADER DETAILS' },
-        { num: 2, title: 'TEAMMATE DETAILS' },
-        { num: 3, title: 'VERIFY EMAIL' },
-        { num: 4, title: 'TICKET PASS' },
-      ]
-    : [
-        { num: 1, title: 'CANDIDATE DETAILS' },
-        { num: 2, title: 'VERIFY EMAIL' },
-        { num: 3, title: 'TICKET PASS' },
-      ];
-
-  const gridCols = isTeam ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-1 sm:grid-cols-3';
+export const RegistrationStepper = ({ currentStep = 1 }) => {
+  const steps = [
+    { num: 1, title: 'REGISTRATION & VERIFICATION' },
+    { num: 2, title: 'CONFIRMED PASS' },
+  ];
 
   return (
-    <div className={`grid ${gridCols} gap-2 border-2 border-black p-1.5 bg-[#F6F3EB] shadow-neo-sm`}>
+    <div className="grid grid-cols-2 gap-2 border-2 border-black p-1.5 bg-[#F6F3EB] shadow-neo-sm">
       {steps.map((st) => {
         const isActive = st.num === currentStep;
         const isDone = st.num < currentStep;

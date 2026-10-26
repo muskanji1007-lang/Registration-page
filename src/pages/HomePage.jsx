@@ -8,7 +8,7 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
       {/* CCC Society Banner */}
-      <div className="border-2 border-black bg-white px-4 py-1.5 shadow-neo-sm inline-flex items-center gap-2">
+      <div className="neo-card-interactive px-4 py-1.5 inline-flex items-center gap-2">
         <span className="w-2.5 h-2.5 bg-[#FF2E51]" />
         <span className="text-xs font-mono font-bold tracking-widest uppercase text-black">
           CCC SOCIETY PRESENTS

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   User,
   Hash,
@@ -6,25 +6,24 @@ import {
   Phone,
   GraduationCap,
   Users,
-  ShieldCheck,
   ArrowRight,
   ArrowLeft,
+  CheckCircle2,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 import FormField from '../components/FormField';
 import Crewmate from '../components/Crewmate';
+import TurnstileWidget from '../components/TurnstileWidget';
 import RegistrationStepper from '../components/RegistrationStepper';
-import OtpVerificationStep from './OtpVerificationStep';
 import SuccessStep from './SuccessStep';
 import { BRANCHES, GENDERS, RESIDENCE_TYPES } from '../utils/constants';
-import { validateRegistrationForm } from '../utils/validation';
 import { apiService } from '../services/apiService';
 
 export const RegistrationPage = ({ onHome }) => {
   // Steps:
-  // 1: Personal Details (Candidate / Leader + Participation Format)
-  // 2: Teammate Details (if Duo Squad)
-  // 3: Email Verification & Submit (Slide 3)
-  // 4: Confirmed Pass (Slide 4 - "You're In, Crewmate")
+  // 1: Registration Form + In-Page Verification
+  // 2: Confirmed Ticket Pass ("You're In, Crewmate")
   const [currentStep, setCurrentStep] = useState(1);
 
   // Form State
@@ -55,6 +54,50 @@ export const RegistrationPage = ({ onHome }) => {
 
   const [formErrors, setFormErrors] = useState({});
   const [confirmedRegistration, setConfirmedRegistration] = useState(null);
+
+  // Verification States: Leader
+  const [leaderToken, setLeaderToken] = useState('');
+  const [leaderOtpSent, setLeaderOtpSent] = useState(false);
+  const [leaderOtp, setLeaderOtp] = useState('');
+  const [leaderVerified, setLeaderVerified] = useState(false);
+  const [leaderLoading, setLeaderLoading] = useState(false);
+  const [leaderError, setLeaderError] = useState('');
+  const [leaderSuccess, setLeaderSuccess] = useState('');
+  const [leaderCooldown, setLeaderCooldown] = useState(0);
+
+  // Verification States: Teammate (If Duo Squad)
+  const [teammateToken, setTeammateToken] = useState('');
+  const [teammateOtpSent, setTeammateOtpSent] = useState(false);
+  const [teammateOtp, setTeammateOtp] = useState('');
+  const [teammateVerified, setTeammateVerified] = useState(false);
+  const [teammateLoading, setTeammateLoading] = useState(false);
+  const [teammateError, setTeammateError] = useState('');
+  const [teammateSuccess, setTeammateSuccess] = useState('');
+  const [teammateCooldown, setTeammateCooldown] = useState(0);
+
+  // Final submission state
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+
+  const leaderTurnstileRef = useRef(null);
+  const teammateTurnstileRef = useRef(null);
+
+  // Cooldown timers
+  useEffect(() => {
+    let t;
+    if (leaderCooldown > 0) {
+      t = setTimeout(() => setLeaderCooldown((c) => c - 1), 1000);
+    }
+    return () => clearTimeout(t);
+  }, [leaderCooldown]);
+
+  useEffect(() => {
+    let t;
+    if (teammateCooldown > 0) {
+      t = setTimeout(() => setTeammateCooldown((c) => c - 1), 1000);
+    }
+    return () => clearTimeout(t);
+  }, [teammateCooldown]);
 
   // Client-side preview for college email
   const deriveEmailPreview = (fullName, studentNumber) => {
@@ -137,6 +180,14 @@ export const RegistrationPage = ({ onHome }) => {
       },
     }));
 
+    if (field === 'fullName' || field === 'studentNumber') {
+      setLeaderVerified(false);
+      setLeaderOtpSent(false);
+      setLeaderOtp('');
+      setLeaderError('');
+      setLeaderSuccess('');
+    }
+
     if (formErrors[`leader_${field}`]) {
       setFormErrors((prev) => {
         const next = { ...prev };
@@ -156,6 +207,14 @@ export const RegistrationPage = ({ onHome }) => {
       },
     }));
 
+    if (field === 'fullName' || field === 'studentNumber') {
+      setTeammateVerified(false);
+      setTeammateOtpSent(false);
+      setTeammateOtp('');
+      setTeammateError('');
+      setTeammateSuccess('');
+    }
+
     if (formErrors[`teammate_${field}`]) {
       setFormErrors((prev) => {
         const next = { ...prev };
@@ -165,11 +224,156 @@ export const RegistrationPage = ({ onHome }) => {
     }
   };
 
-  // Step 1 Validation & Proceed
-  const handleProceedFromStep1 = (e) => {
-    e.preventDefault();
+  // Send OTP for Leader
+  const handleSendLeaderOtp = async (isResend = false) => {
+    if (!formData.leader.fullName.trim() || !formData.leader.studentNumber.trim()) {
+      setLeaderError('Please fill Full Name and Student No. first.');
+      return;
+    }
+    if (!leaderToken) {
+      setLeaderError('Please complete the security check (CAPTCHA) below.');
+      return;
+    }
 
-    // Validate Leader fields
+    setLeaderLoading(true);
+    setLeaderError('');
+    setLeaderSuccess('');
+
+    try {
+      const sendFn = isResend ? apiService.resendOtp : apiService.sendOtp;
+      const res = await sendFn({
+        fullName: formData.leader.fullName.trim(),
+        studentNumber: formData.leader.studentNumber.trim(),
+        turnstileToken: leaderToken,
+      });
+
+      setLeaderOtpSent(true);
+      setLeaderCooldown(60);
+      setLeaderSuccess(res.message || `Verification code sent to ${formData.leader.collegeEmail}`);
+      setLeaderToken('');
+      if (leaderTurnstileRef.current) leaderTurnstileRef.current.reset();
+    } catch (err) {
+      if (err.status === 429) {
+        setLeaderError('Rate Limit: Too many OTP requests from this network. Please wait 1-2 minutes or use mobile data / hotspot.');
+      } else {
+        setLeaderError(err.message || 'Failed to dispatch OTP. Please check your details and try again.');
+      }
+      setLeaderToken('');
+      if (leaderTurnstileRef.current) leaderTurnstileRef.current.reset();
+    } finally {
+      setLeaderLoading(false);
+    }
+  };
+
+  // Verify Leader OTP
+  const handleVerifyLeaderOtp = async () => {
+    const cleanOtp = leaderOtp.trim();
+    if (cleanOtp.length !== 6) {
+      setLeaderError('Please enter the complete 6-digit OTP code.');
+      return;
+    }
+
+    setLeaderLoading(true);
+    setLeaderError('');
+    setLeaderSuccess('');
+
+    try {
+      const res = await apiService.verifyOtp({
+        email: formData.leader.collegeEmail,
+        otp: cleanOtp,
+      });
+
+      setLeaderVerified(true);
+      setLeaderSuccess(res.message || 'Official email verified successfully!');
+      setFormData((prev) => ({
+        ...prev,
+        leader: { ...prev.leader, isVerified: true },
+      }));
+    } catch (err) {
+      setLeaderError(err.message || 'Invalid or expired OTP code. Please try again.');
+    } finally {
+      setLeaderLoading(false);
+    }
+  };
+
+  // Send OTP for Teammate
+  const handleSendTeammateOtp = async (isResend = false) => {
+    if (!formData.teammate.fullName.trim() || !formData.teammate.studentNumber.trim()) {
+      setTeammateError('Please fill Teammate Full Name and Student No. first.');
+      return;
+    }
+    if (!teammateToken) {
+      setTeammateError('Please complete Teammate security check below.');
+      return;
+    }
+
+    setTeammateLoading(true);
+    setTeammateError('');
+    setTeammateSuccess('');
+
+    try {
+      const sendFn = isResend ? apiService.resendOtp : apiService.sendOtp;
+      const res = await sendFn({
+        fullName: formData.teammate.fullName.trim(),
+        studentNumber: formData.teammate.studentNumber.trim(),
+        turnstileToken: teammateToken,
+      });
+
+      setTeammateOtpSent(true);
+      setTeammateCooldown(60);
+      setTeammateSuccess(res.message || `Verification code sent to ${formData.teammate.collegeEmail}`);
+      setTeammateToken('');
+      if (teammateTurnstileRef.current) teammateTurnstileRef.current.reset();
+    } catch (err) {
+      if (err.status === 429) {
+        setTeammateError('Rate Limit: Too many OTP requests. Please wait 1-2 minutes or switch to mobile data.');
+      } else {
+        setTeammateError(err.message || 'Failed to dispatch OTP to Teammate.');
+      }
+      setTeammateToken('');
+      if (teammateTurnstileRef.current) teammateTurnstileRef.current.reset();
+    } finally {
+      setTeammateLoading(false);
+    }
+  };
+
+  // Verify Teammate OTP
+  const handleVerifyTeammateOtp = async () => {
+    const cleanOtp = teammateOtp.trim();
+    if (cleanOtp.length !== 6) {
+      setTeammateError('Please enter the complete 6-digit OTP code.');
+      return;
+    }
+
+    setTeammateLoading(true);
+    setTeammateError('');
+    setTeammateSuccess('');
+
+    try {
+      const res = await apiService.verifyOtp({
+        email: formData.teammate.collegeEmail,
+        otp: cleanOtp,
+      });
+
+      setTeammateVerified(true);
+      setTeammateSuccess(res.message || 'Teammate official email verified successfully!');
+      setFormData((prev) => ({
+        ...prev,
+        teammate: { ...prev.teammate, isVerified: true },
+      }));
+    } catch (err) {
+      setTeammateError(err.message || 'Invalid or expired OTP code.');
+    } finally {
+      setTeammateLoading(false);
+    }
+  };
+
+  // Final Form Validation and Submission
+  const handleSubmitRegistration = async (e) => {
+    e.preventDefault();
+    setSubmitError('');
+
+    // 1. Validate Leader fields
     const errors = {};
     if (!formData.leader.fullName.trim()) errors.leader_fullName = 'Full Name is required';
     if (!/^(?:24|25)\d{5,6}$/.test(formData.leader.studentNumber.trim())) {
@@ -181,47 +385,22 @@ export const RegistrationPage = ({ onHome }) => {
     if (!formData.leader.branch) errors.leader_branch = 'Please select Branch & Section';
     if (!formData.leader.gender) errors.leader_gender = 'Please select Gender';
 
-    // Default team name if empty
-    if (!formData.teamName.trim()) {
-      formData.teamName = formData.registrationType === 'team' ? 'BugBusters Squad' : `${formData.leader.fullName.trim() || 'Solo'} Hunter`;
-    }
-
-    if (Object.keys(errors).length > 0) {
-      setFormErrors(errors);
-      window.scrollTo({ top: 120, behavior: 'smooth' });
-      return;
-    }
-
-    setFormErrors({});
-
-    // If Duo Squad, move to Step 2 (Teammate Details).
-    // If Solo Hunter, skip directly to Step 3 (Email OTP Verification).
+    // 2. Validate Teammate fields (if Duo Squad)
     if (formData.registrationType === 'team') {
-      setCurrentStep(2);
-    } else {
-      setCurrentStep(3);
+      if (!formData.teammate.fullName.trim()) errors.teammate_fullName = 'Teammate Full Name is required';
+      if (!/^(?:24|25)\d{5,6}$/.test(formData.teammate.studentNumber.trim())) {
+        errors.teammate_studentNumber = 'Must start with 24 or 25 (7 or 8 digits)';
+      }
+      if (formData.teammate.studentNumber.trim() === formData.leader.studentNumber.trim()) {
+        errors.teammate_studentNumber = 'Teammate roll number cannot be the same as Leader';
+      }
+      if (!/^[6-9]\d{9}$/.test(formData.teammate.phone.trim())) {
+        errors.teammate_phone = '10-digit mobile starting with 6, 7, 8, or 9';
+      }
+      if (!formData.teammate.branch) errors.teammate_branch = 'Please select Branch & Section';
+      if (!formData.teammate.gender) errors.teammate_gender = 'Please select Gender';
+      if (!formData.teamName.trim()) errors.teamName = 'Team Name is required for Duo Squad';
     }
-    window.scrollTo({ top: 80, behavior: 'smooth' });
-  };
-
-  // Step 2 Validation (Teammate Details) & Proceed directly to Email OTP Verification
-  const handleProceedFromStep2 = (e) => {
-    e.preventDefault();
-    const errors = {};
-
-    if (!formData.teammate.fullName.trim()) errors.teammate_fullName = 'Teammate Full Name is required';
-    if (!/^(?:24|25)\d{5,6}$/.test(formData.teammate.studentNumber.trim())) {
-      errors.teammate_studentNumber = 'Must start with 24 or 25 (7 or 8 digits)';
-    }
-    if (formData.teammate.studentNumber.trim() === formData.leader.studentNumber.trim()) {
-      errors.teammate_studentNumber = 'Teammate roll number cannot be the same as Leader';
-    }
-    if (!/^[6-9]\d{9}$/.test(formData.teammate.phone.trim())) {
-      errors.teammate_phone = '10-digit mobile starting with 6, 7, 8, or 9';
-    }
-    if (!formData.teammate.branch) errors.teammate_branch = 'Please select Branch & Section';
-    if (!formData.teammate.gender) errors.teammate_gender = 'Please select Gender';
-    if (!formData.teamName.trim()) errors.teamName = 'Team Name is required for Duo Squad';
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -229,19 +408,82 @@ export const RegistrationPage = ({ onHome }) => {
       return;
     }
 
-    setFormErrors({});
-    setCurrentStep(3); // Go directly to OTP Verification
-    window.scrollTo({ top: 80, behavior: 'smooth' });
+    // 3. Check OTP Verification Status
+    if (!leaderVerified) {
+      setSubmitError('Please verify your official college email with the 6-digit OTP code below.');
+      return;
+    }
+    if (formData.registrationType === 'team' && !teammateVerified) {
+      setSubmitError('Please verify Teammate official college email with the 6-digit OTP code below.');
+      return;
+    }
+
+    // Default team name if empty (for Solo)
+    const finalTeamName = formData.teamName.trim() || `${formData.leader.fullName.trim()} Hunter`;
+
+    // 4. Construct Payload
+    let payload;
+    if (formData.registrationType === 'team') {
+      payload = {
+        registrationType: 'team',
+        teamName: finalTeamName,
+        members: [
+          {
+            fullName: formData.leader.fullName.trim(),
+            studentNumber: formData.leader.studentNumber.trim(),
+            collegeEmail: formData.leader.collegeEmail.trim(),
+            phone: formData.leader.phone.trim(),
+            branch: formData.leader.branch,
+            gender: formData.leader.gender,
+            residence: formData.leader.residence,
+            isLeader: true,
+          },
+          {
+            fullName: formData.teammate.fullName.trim(),
+            studentNumber: formData.teammate.studentNumber.trim(),
+            collegeEmail: formData.teammate.collegeEmail.trim(),
+            phone: formData.teammate.phone.trim(),
+            branch: formData.teammate.branch,
+            gender: formData.teammate.gender,
+            residence: formData.teammate.residence,
+            isLeader: false,
+          },
+        ],
+      };
+    } else {
+      payload = {
+        registrationType: 'solo',
+        teamName: finalTeamName,
+        fullName: formData.leader.fullName.trim(),
+        studentNumber: formData.leader.studentNumber.trim(),
+        collegeEmail: formData.leader.collegeEmail.trim(),
+        phone: formData.leader.phone.trim(),
+        branch: formData.leader.branch,
+        gender: formData.leader.gender,
+        residence: formData.leader.residence,
+      };
+    }
+
+    // 5. Submit to Backend
+    setSubmitting(true);
+    try {
+      const res = await apiService.register(payload);
+      const record = res.registration || res.data || {
+        ...payload,
+        registrationId: res.registrationId || `DBX-${Date.now().toString().slice(-6)}`,
+        createdAt: new Date().toISOString(),
+      };
+      setConfirmedRegistration(record);
+      setCurrentStep(2); // Go directly to Confirmed Ticket Pass!
+      window.scrollTo({ top: 40, behavior: 'smooth' });
+    } catch (err) {
+      setSubmitError(err.message || 'Registration submission failed. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
-  // Step 3 Completion (Confirmed final registration saved) -> Step 4
-  const handleConfirmedSubmit = (registrationRecord) => {
-    setConfirmedRegistration(registrationRecord);
-    setCurrentStep(4); // Go to "You're In, Crewmate"
-    window.scrollTo({ top: 50, behavior: 'smooth' });
-  };
-
-  // Reset form for another registration
+  // Reset form
   const handleReset = () => {
     setFormData({
       registrationType: 'solo',
@@ -267,14 +509,25 @@ export const RegistrationPage = ({ onHome }) => {
         isVerified: false,
       },
     });
+    setLeaderVerified(false);
+    setLeaderOtpSent(false);
+    setLeaderOtp('');
+    setTeammateVerified(false);
+    setTeammateOtpSent(false);
+    setTeammateOtp('');
     setFormErrors({});
     setConfirmedRegistration(null);
     setCurrentStep(1);
   };
 
+  const isAllVerified =
+    formData.registrationType === 'team'
+      ? leaderVerified && teammateVerified
+      : leaderVerified;
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
-      {/* Top Header Bar (Matching Slide 1) */}
+      {/* Top Header Bar */}
       <div className="flex items-center justify-between pb-1 font-mono text-xs text-gray-700">
         <button
           onClick={onHome}
@@ -288,7 +541,7 @@ export const RegistrationPage = ({ onHome }) => {
         </span>
       </div>
 
-      {/* Main Debut Banner Card (Matching Slide 1) */}
+      {/* Main Debut Banner Card */}
       <div className="neo-box p-6 md:p-8 bg-[#FCFAF6] flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="space-y-2 max-w-xl">
           <div className="inline-flex items-center gap-2 text-xs font-mono font-bold text-[#FF2E51] tracking-wider uppercase">
@@ -304,7 +557,7 @@ export const RegistrationPage = ({ onHome }) => {
             Register for DeBugX 2026 — Bug Hunting Challenge.
           </p>
           <p className="text-xs font-sans text-gray-600 leading-relaxed">
-            Enter your details, choose your participation format, and get ready to test your debugging skills.
+            Fill your details, verify your college email with OTP, and claim your crewmate pass.
           </p>
         </div>
 
@@ -313,19 +566,19 @@ export const RegistrationPage = ({ onHome }) => {
         </div>
       </div>
 
-      {/* STEP 1: PERSONAL DETAILS (Matching Slide 1) */}
+      {/* STEP 1: REGISTRATION & IN-PAGE VERIFICATION */}
       {currentStep === 1 && (
-        <form onSubmit={handleProceedFromStep1} className="neo-box p-6 md:p-8 bg-[#FCFAF6] space-y-8">
-          {/* Stepper Header */}
-          <RegistrationStepper currentStep={1} isTeam={formData.registrationType === 'team'} />
+        <form onSubmit={handleSubmitRegistration} className="neo-box p-6 md:p-8 bg-[#FCFAF6] space-y-8">
+          {/* Stepper Header (Only 2 steps: Register & Ticket Pass) */}
+          <RegistrationStepper currentStep={1} />
 
-          {/* Section 1: Member Details */}
+          {/* Section 1: Member / Leader Details */}
           <div className="space-y-6">
             <div className="flex items-center justify-between pb-3 border-b-2 border-black">
               <div className="flex items-center gap-2">
                 <span className="w-2.5 h-2.5 bg-[#FF2E51]" />
                 <h2 className="text-sm sm:text-base font-extrabold font-mono tracking-wider text-black uppercase">
-                  1. MEMBER DETAILS
+                  {formData.registrationType === 'team' ? '1. LEADER DETAILS' : '1. CANDIDATE DETAILS'}
                 </h2>
               </div>
               <span className="text-[10px] font-mono font-bold text-[#FF2E51] tracking-wider uppercase">
@@ -347,26 +600,26 @@ export const RegistrationPage = ({ onHome }) => {
                 helperText="Candidate official name"
               />
 
-              {/* Student Roll Number */}
+              {/* Student No. (Updated as requested in Screenshot 2) */}
               <FormField
-                label="STUDENT ROLL NUMBER / UNIVERSITY ROLL NO."
+                label="STUDENT NO."
                 name="studentNumber"
                 icon={Hash}
                 value={formData.leader.studentNumber}
                 onChange={(e) => handleLeaderChange('studentNumber', e.target.value.replace(/\D/g, ''))}
-                placeholder="e.g. 2300270100045"
+                placeholder="e.g. 24154046"
                 error={formErrors.leader_studentNumber}
                 helperText="Must start with 24 or 25 (7 or 8 digits)"
               />
 
-              {/* Institutional College Email */}
+              {/* Institutional College Email Preview */}
               <FormField
                 label="INSTITUTIONAL COLLEGE EMAIL"
                 name="collegeEmail"
                 icon={Mail}
                 value={formData.leader.collegeEmail}
                 readOnly
-                placeholder="alex230027@akgec.ac.in"
+                placeholder="alex24154046@akgec.ac.in"
                 helperText="Official AKGEC address (firstName + studentNo + @akgec.ac.in)"
                 rightBadge={
                   <span className="text-[10px] font-mono font-bold text-[#FF2E51]">
@@ -455,7 +708,7 @@ export const RegistrationPage = ({ onHome }) => {
               </div>
             </div>
 
-            {/* Residence Type Radio Options (Matching Slide 1) */}
+            {/* Residence Type */}
             <div className="space-y-2">
               <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
                 RESIDENCE TYPE <span className="text-[#FF2E51]">*</span>
@@ -495,26 +748,21 @@ export const RegistrationPage = ({ onHome }) => {
             </div>
           </div>
 
-          {/* Divider Line (Tapered divider from Slide 1) */}
-          <div className="relative py-2">
-            <div className="h-[2px] bg-gradient-to-r from-transparent via-black to-transparent w-full" />
-          </div>
-
-          {/* Section 2: Participation Format (Matching Slide 1) */}
-          <div className="space-y-5">
-            <div>
-              <div className="flex items-center gap-2 pb-1">
-                <span className="w-2.5 h-2.5 bg-black" />
+          {/* Section 2: Participation Format Selection */}
+          <div className="space-y-4 pt-4 border-t-2 border-black">
+            <div className="flex items-center justify-between pb-2 border-b-2 border-black">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 bg-[#FF2E51]" />
                 <h2 className="text-sm sm:text-base font-extrabold font-mono tracking-wider text-black uppercase">
                   2. PARTICIPATION FORMAT
                 </h2>
               </div>
-              <p className="text-xs font-sans text-gray-600">
-                Select whether you want to compete individually or team up as a collaborative 2-member squad.
-              </p>
+              <span className="text-xs font-mono text-gray-500 uppercase">
+                {formData.registrationType === 'team' ? 'DUO SQUAD (2 MEMBERS)' : 'SOLO (1 MEMBER)'}
+              </span>
             </div>
 
-            {/* Format Selection Cards (Exact match to Slide 1) */}
+            {/* Format Selection Cards (With tactile press animation) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Option 1: Solo Hunter (Left) */}
               <button
@@ -595,7 +843,487 @@ export const RegistrationPage = ({ onHome }) => {
             </div>
           </div>
 
-          {/* Bottom Action Buttons (Matching Slide 1) */}
+          {/* Section 2b: Teammate Details (Only rendered if Duo Squad) */}
+          {formData.registrationType === 'team' && (
+            <div className="space-y-6 pt-4 border-t-2 border-black">
+              <div className="flex items-center justify-between pb-3 border-b-2 border-black">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 bg-[#FF2E51]" />
+                  <h2 className="text-sm sm:text-base font-extrabold font-mono tracking-wider text-black uppercase">
+                    3. TEAMMATE DETAILS
+                  </h2>
+                </div>
+                <span className="text-[10px] font-mono font-bold text-[#FF2E51] tracking-wider uppercase">
+                  MEMBER 2
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <FormField
+                  label="TEAMMATE FULL NAME"
+                  name="teammate_fullName"
+                  icon={User}
+                  value={formData.teammate.fullName}
+                  onChange={(e) => handleTeammateChange('fullName', e.target.value)}
+                  placeholder="e.g. Aman Verma"
+                  error={formErrors.teammate_fullName}
+                  helperText="2-100 characters, letters only"
+                />
+
+                {/* Teammate Student No. */}
+                <FormField
+                  label="TEAMMATE STUDENT NO."
+                  name="teammate_studentNumber"
+                  icon={Hash}
+                  value={formData.teammate.studentNumber}
+                  onChange={(e) =>
+                    handleTeammateChange('studentNumber', e.target.value.replace(/\D/g, ''))
+                  }
+                  placeholder="e.g. 2412214"
+                  error={formErrors.teammate_studentNumber}
+                  helperText="Must start with 24 or 25 (7 or 8 digits)"
+                />
+
+                <FormField
+                  label="TEAMMATE COLLEGE EMAIL"
+                  name="teammate_collegeEmail"
+                  icon={Mail}
+                  value={formData.teammate.collegeEmail}
+                  readOnly
+                  placeholder="Automatically generated"
+                  rightBadge={
+                    <span className="text-[10px] font-mono font-bold text-[#FF2E51]">
+                      @akgec.ac.in
+                    </span>
+                  }
+                />
+
+                <FormField
+                  label="TEAMMATE PHONE NUMBER"
+                  name="teammate_phone"
+                  type="tel"
+                  icon={Phone}
+                  value={formData.teammate.phone}
+                  onChange={(e) =>
+                    handleTeammateChange('phone', e.target.value.replace(/\D/g, ''))
+                  }
+                  placeholder="+91 98765 43210"
+                  error={formErrors.teammate_phone}
+                  helperText="10-digit mobile number"
+                />
+
+                {/* Branch */}
+                <div className="space-y-1.5 w-full">
+                  <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
+                    BRANCH &amp; SECTION <span className="text-[#FF2E51]">*</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                      <GraduationCap className="w-4 h-4" />
+                    </div>
+                    <select
+                      value={formData.teammate.branch}
+                      onChange={(e) => handleTeammateChange('branch', e.target.value)}
+                      className={`w-full bg-white border-2 text-black text-xs sm:text-sm font-mono py-2.5 pl-9 pr-8 focus:outline-none focus:ring-0 ${
+                        formErrors.teammate_branch
+                          ? 'border-[#FF2E51] bg-red-50/20'
+                          : 'border-black focus:border-[#FF2E51]'
+                      }`}
+                    >
+                      <option value="">Select Branch &amp; Section</option>
+                      {BRANCHES.map((b) => (
+                        <option key={b} value={b}>
+                          {b}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {formErrors.teammate_branch && (
+                    <p className="text-[11px] font-mono text-[#FF2E51] font-semibold">
+                      {formErrors.teammate_branch}
+                    </p>
+                  )}
+                </div>
+
+                {/* Gender */}
+                <div className="space-y-1.5 w-full">
+                  <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
+                    GENDER <span className="text-[#FF2E51]">*</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
+                      <User className="w-4 h-4" />
+                    </div>
+                    <select
+                      value={formData.teammate.gender}
+                      onChange={(e) => handleTeammateChange('gender', e.target.value)}
+                      className={`w-full bg-white border-2 text-black text-xs sm:text-sm font-mono py-2.5 pl-9 pr-8 focus:outline-none focus:ring-0 ${
+                        formErrors.teammate_gender
+                          ? 'border-[#FF2E51] bg-red-50/20'
+                          : 'border-black focus:border-[#FF2E51]'
+                      }`}
+                    >
+                      <option value="">Select Gender</option>
+                      {GENDERS.map((g) => (
+                        <option key={g} value={g}>
+                          {g}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  {formErrors.teammate_gender && (
+                    <p className="text-[11px] font-mono text-[#FF2E51] font-semibold">
+                      {formErrors.teammate_gender}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Residence */}
+              <div className="space-y-2">
+                <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
+                  RESIDENCE TYPE <span className="text-[#FF2E51]">*</span>
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {RESIDENCE_TYPES.map((res) => {
+                    const isChecked = formData.teammate.residence === res.value;
+                    return (
+                      <label
+                        key={res.value}
+                        className={`flex items-start gap-3 p-3.5 border-2 cursor-pointer transition-all ${
+                          isChecked
+                            ? 'border-black bg-white shadow-neo-sm ring-1 ring-black'
+                            : 'border-black/30 bg-white/70 hover:border-black'
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="teammate_residence"
+                          value={res.value}
+                          checked={isChecked}
+                          onChange={(e) => handleTeammateChange('residence', e.target.value)}
+                          className="mt-0.5 text-[#FF2E51] focus:ring-[#FF2E51]"
+                        />
+                        <div>
+                          <div className="font-mono font-bold text-xs uppercase text-black">
+                            {res.label}
+                          </div>
+                          <div className="text-[11px] font-sans text-gray-500">
+                            {res.description}
+                          </div>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Section: Email Verification (Directly in-page, no separate OTP page!) */}
+          <div className="space-y-5 pt-4 border-t-2 border-black">
+            <div className="flex items-center justify-between pb-2 border-b-2 border-black">
+              <div className="flex items-center gap-2">
+                <span className="w-2.5 h-2.5 bg-[#FF2E51]" />
+                <h2 className="text-sm sm:text-base font-extrabold font-mono tracking-wider text-black uppercase">
+                  {formData.registrationType === 'team' ? '4. EMAIL VERIFICATION' : '3. EMAIL VERIFICATION'}
+                </h2>
+              </div>
+              {isAllVerified && (
+                <span className="text-[10px] font-mono font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 border border-emerald-500 uppercase">
+                  ✓ All Verified
+                </span>
+              )}
+            </div>
+
+            {/* Leader Verification Box */}
+            <div className="p-5 bg-white border-2 border-black shadow-neo-sm space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-black/10">
+                <span className="text-xs font-mono font-bold uppercase text-black">
+                  {formData.registrationType === 'team' ? 'LEADER EMAIL VERIFICATION' : 'CANDIDATE EMAIL VERIFICATION'}
+                </span>
+                {leaderVerified ? (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-emerald-600">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>VERIFIED ✓</span>
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-mono font-bold text-[#FF2E51] uppercase">
+                    PENDING OTP
+                  </span>
+                )}
+              </div>
+
+              <div className="text-xs font-mono text-gray-600">
+                Official Email:{' '}
+                <strong className="text-black">
+                  {formData.leader.collegeEmail || '(Enter Student No. to preview)'}
+                </strong>
+              </div>
+
+              {!leaderOtpSent && !leaderVerified ? (
+                <div className="space-y-3">
+                  <p className="text-xs font-sans text-gray-600 leading-relaxed">
+                    Solve the security check below to receive your 6-digit verification code.
+                  </p>
+
+                  <div className="flex justify-center py-1">
+                    <TurnstileWidget
+                      ref={leaderTurnstileRef}
+                      onSuccess={(token) => {
+                        setLeaderToken(token);
+                        setLeaderError('');
+                      }}
+                      onError={(err) => setLeaderError(err)}
+                      onExpire={() => setLeaderToken('')}
+                    />
+                  </div>
+
+                  {leaderError && (
+                    <div className="p-3 bg-red-50 border-2 border-[#FF2E51] text-[#FF2E51] font-mono text-xs font-bold flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>{leaderError}</span>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => handleSendLeaderOtp(false)}
+                    disabled={leaderLoading || !leaderToken || !formData.leader.collegeEmail}
+                    className="w-full neo-button bg-[#FF2E51] text-white py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-[#e02445]"
+                  >
+                    {leaderLoading ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>SENDING OTP...</span>
+                      </>
+                    ) : (
+                      <span>SEND VERIFICATION OTP</span>
+                    )}
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4 pt-1">
+                  {leaderSuccess && (
+                    <div className="p-2.5 bg-emerald-50 border border-emerald-500 text-emerald-800 font-mono text-xs font-bold flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                      <span>{leaderSuccess}</span>
+                    </div>
+                  )}
+
+                  {!leaderVerified && (
+                    <div className="space-y-3">
+                      <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
+                        ENTER 6-DIGIT OTP CODE
+                      </label>
+                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={6}
+                          value={leaderOtp}
+                          onChange={(e) => setLeaderOtp(e.target.value.replace(/\D/g, ''))}
+                          placeholder="••••••"
+                          className="bg-white border-2 border-black text-black font-mono text-xl tracking-[0.3em] px-4 py-2 text-center w-full sm:w-48 focus:outline-none focus:border-[#FF2E51]"
+                          autoFocus
+                        />
+                        <button
+                          type="button"
+                          onClick={handleVerifyLeaderOtp}
+                          disabled={leaderLoading || leaderOtp.trim().length !== 6}
+                          className="neo-button bg-black text-white px-6 py-2.5 text-xs font-mono font-bold uppercase tracking-wider hover:bg-gray-800 disabled:opacity-50 flex items-center justify-center gap-2"
+                        >
+                          {leaderLoading ? (
+                            <>
+                              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                              <span>VERIFYING...</span>
+                            </>
+                          ) : (
+                            <span>VERIFY CODE →</span>
+                          )}
+                        </button>
+                      </div>
+
+                      {leaderError && (
+                        <div className="p-3 bg-red-50 border-2 border-[#FF2E51] text-[#FF2E51] font-mono text-xs font-bold flex items-center gap-2">
+                          <AlertCircle className="w-4 h-4 shrink-0" />
+                          <span>{leaderError}</span>
+                        </div>
+                      )}
+
+                      <div className="flex items-center gap-3 text-xs font-mono text-gray-500 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => handleSendLeaderOtp(true)}
+                          disabled={leaderLoading || leaderCooldown > 0}
+                          className="underline hover:text-black disabled:opacity-50 disabled:no-underline"
+                        >
+                          {leaderCooldown > 0 ? `Resend OTP in ${leaderCooldown}s` : 'Resend OTP'}
+                        </button>
+                        <span>•</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setLeaderOtpSent(false);
+                            setLeaderToken('');
+                            setLeaderOtp('');
+                            setLeaderError('');
+                          }}
+                          className="underline hover:text-black"
+                        >
+                          Change details
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Teammate Verification Box (If Duo Squad) */}
+            {formData.registrationType === 'team' && (
+              <div className="p-5 bg-white border-2 border-black shadow-neo-sm space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-black/10">
+                  <span className="text-xs font-mono font-bold uppercase text-black">
+                    TEAMMATE EMAIL VERIFICATION
+                  </span>
+                  {teammateVerified ? (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-emerald-600">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>VERIFIED ✓</span>
+                    </span>
+                  ) : (
+                    <span className="text-[10px] font-mono font-bold text-[#FF2E51] uppercase">
+                      PENDING OTP
+                    </span>
+                  )}
+                </div>
+
+                <div className="text-xs font-mono text-gray-600">
+                  Official Email:{' '}
+                  <strong className="text-black">
+                    {formData.teammate.collegeEmail || '(Enter Teammate Student No. to preview)'}
+                  </strong>
+                </div>
+
+                {!teammateOtpSent && !teammateVerified ? (
+                  <div className="space-y-3">
+                    <p className="text-xs font-sans text-gray-600 leading-relaxed">
+                      Solve the security check below to receive teammate verification code.
+                    </p>
+
+                    <div className="flex justify-center py-1">
+                      <TurnstileWidget
+                        ref={teammateTurnstileRef}
+                        onSuccess={(token) => {
+                          setTeammateToken(token);
+                          setTeammateError('');
+                        }}
+                        onError={(err) => setTeammateError(err)}
+                        onExpire={() => setTeammateToken('')}
+                      />
+                    </div>
+
+                    {teammateError && (
+                      <div className="p-3 bg-red-50 border-2 border-[#FF2E51] text-[#FF2E51] font-mono text-xs font-bold flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
+                        <span>{teammateError}</span>
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => handleSendTeammateOtp(false)}
+                      disabled={teammateLoading || !teammateToken || !formData.teammate.collegeEmail}
+                      className="w-full neo-button bg-[#FF2E51] text-white py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-[#e02445]"
+                    >
+                      {teammateLoading ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <span>SENDING TEAMMATE OTP...</span>
+                        </>
+                      ) : (
+                        <span>SEND TEAMMATE VERIFICATION OTP</span>
+                      )}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-4 pt-1">
+                    {teammateSuccess && (
+                      <div className="p-2.5 bg-emerald-50 border border-emerald-500 text-emerald-800 font-mono text-xs font-bold flex items-center gap-2">
+                        <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
+                        <span>{teammateSuccess}</span>
+                      </div>
+                    )}
+
+                    {!teammateVerified && (
+                      <div className="space-y-3">
+                        <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
+                          ENTER TEAMMATE 6-DIGIT OTP CODE
+                        </label>
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={6}
+                            value={teammateOtp}
+                            onChange={(e) => setTeammateOtp(e.target.value.replace(/\D/g, ''))}
+                            placeholder="••••••"
+                            className="bg-white border-2 border-black text-black font-mono text-xl tracking-[0.3em] px-4 py-2 text-center w-full sm:w-48 focus:outline-none focus:border-[#FF2E51]"
+                          />
+                          <button
+                            type="button"
+                            onClick={handleVerifyTeammateOtp}
+                            disabled={teammateLoading || teammateOtp.trim().length !== 6}
+                            className="neo-button bg-black text-white px-6 py-2.5 text-xs font-mono font-bold uppercase tracking-wider hover:bg-gray-800 disabled:opacity-50 flex items-center justify-center gap-2"
+                          >
+                            {teammateLoading ? (
+                              <>
+                                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                <span>VERIFYING...</span>
+                              </>
+                            ) : (
+                              <span>VERIFY CODE →</span>
+                            )}
+                          </button>
+                        </div>
+
+                        {teammateError && (
+                          <div className="p-3 bg-red-50 border-2 border-[#FF2E51] text-[#FF2E51] font-mono text-xs font-bold flex items-center gap-2">
+                            <AlertCircle className="w-4 h-4 shrink-0" />
+                            <span>{teammateError}</span>
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-3 text-xs font-mono text-gray-500 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => handleSendTeammateOtp(true)}
+                            disabled={teammateLoading || teammateCooldown > 0}
+                            className="underline hover:text-black disabled:opacity-50 disabled:no-underline"
+                          >
+                            {teammateCooldown > 0
+                              ? `Resend OTP in ${teammateCooldown}s`
+                              : 'Resend OTP'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Global Submit Error Banner */}
+          {submitError && (
+            <div className="p-3.5 bg-red-50 border-2 border-[#FF2E51] text-[#FF2E51] font-mono text-xs font-bold flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 shrink-0" />
+              <span>{submitError}</span>
+            </div>
+          )}
+
+          {/* Bottom Action Buttons (Single Back Arrow & Instant Submit) */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 pt-4 border-t-2 border-black/10">
             <button
               type="button"
@@ -608,229 +1336,27 @@ export const RegistrationPage = ({ onHome }) => {
 
             <button
               type="submit"
-              className="neo-button bg-[#FF2E51] text-white px-8 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-[#e02445] w-full sm:w-auto"
+              disabled={submitting || !isAllVerified}
+              className="neo-button bg-[#FF2E51] text-white px-8 py-3.5 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-[#e02445] disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto shadow-neo"
             >
-              <span>NEXT</span>
-              <ArrowRight className="w-4 h-4" />
+              {submitting ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>SUBMITTING REGISTRATION...</span>
+                </>
+              ) : (
+                <>
+                  <span>CONFIRM &amp; CLAIM PASS</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           </div>
         </form>
       )}
 
-      {/* STEP 2: ADDITIONAL DETAILS (TEAMMATE DETAILS) */}
+      {/* STEP 2: SUCCESS PASS (Slide 4 - "You're In, Crewmate") */}
       {currentStep === 2 && (
-        <form onSubmit={handleProceedFromStep2} className="neo-box p-6 md:p-8 bg-[#FCFAF6] space-y-8">
-          {/* Stepper Header */}
-          <RegistrationStepper currentStep={2} isTeam={true} />
-
-          {/* Section: Teammate Details */}
-          <div className="space-y-6">
-            <div className="flex items-center justify-between pb-3 border-b-2 border-black">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 bg-black" />
-                <h2 className="text-sm sm:text-base font-extrabold font-mono tracking-wider text-black uppercase">
-                  TEAMMATE DETAILS (MEMBER 2)
-                </h2>
-              </div>
-              <span className="text-[10px] font-mono font-bold text-[#FF2E51] tracking-wider uppercase">
-                * REQUIRED FOR DUO SQUAD
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <FormField
-                label="TEAMMATE FULL NAME"
-                name="teammate_fullName"
-                icon={User}
-                value={formData.teammate.fullName}
-                onChange={(e) => handleTeammateChange('fullName', e.target.value)}
-                placeholder="e.g. Aman Verma"
-                error={formErrors.teammate_fullName}
-                helperText="2-100 characters, letters only"
-              />
-
-              <FormField
-                label="TEAMMATE STUDENT ROLL NUMBER"
-                name="teammate_studentNumber"
-                icon={Hash}
-                value={formData.teammate.studentNumber}
-                onChange={(e) =>
-                  handleTeammateChange('studentNumber', e.target.value.replace(/\D/g, ''))
-                }
-                placeholder="e.g. 2412214"
-                error={formErrors.teammate_studentNumber}
-                helperText="Must start with 24 or 25 (7 or 8 digits)"
-              />
-
-              <FormField
-                label="TEAMMATE COLLEGE EMAIL"
-                name="teammate_collegeEmail"
-                icon={Mail}
-                value={formData.teammate.collegeEmail}
-                readOnly
-                placeholder="Automatically generated"
-                rightBadge={
-                  <span className="text-[10px] font-mono font-bold text-[#FF2E51]">
-                    @akgec.ac.in
-                  </span>
-                }
-              />
-
-              <FormField
-                label="TEAMMATE PHONE / WHATSAPP"
-                name="teammate_phone"
-                type="tel"
-                icon={Phone}
-                value={formData.teammate.phone}
-                onChange={(e) => handleTeammateChange('phone', e.target.value.replace(/\D/g, ''))}
-                placeholder="9876543211"
-                error={formErrors.teammate_phone}
-                helperText="10 digits starting with 6, 7, 8, or 9"
-              />
-
-              {/* Branch */}
-              <div className="space-y-1.5 w-full">
-                <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
-                  BRANCH &amp; SECTION <span className="text-[#FF2E51]">*</span>
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                    <GraduationCap className="w-4 h-4" />
-                  </div>
-                  <select
-                    value={formData.teammate.branch}
-                    onChange={(e) => handleTeammateChange('branch', e.target.value)}
-                    className={`w-full bg-white border-2 text-black text-xs sm:text-sm font-mono py-2.5 pl-9 pr-8 focus:outline-none focus:ring-0 ${
-                      formErrors.teammate_branch
-                        ? 'border-[#FF2E51] bg-red-50/20'
-                        : 'border-black focus:border-[#FF2E51]'
-                    }`}
-                  >
-                    <option value="">Select Teammate's Branch</option>
-                    {BRANCHES.map((b) => (
-                      <option key={b} value={b}>
-                        {b}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {formErrors.teammate_branch && (
-                  <p className="text-[11px] font-mono text-[#FF2E51] font-semibold">
-                    {formErrors.teammate_branch}
-                  </p>
-                )}
-              </div>
-
-              {/* Gender */}
-              <div className="space-y-1.5 w-full">
-                <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
-                  GENDER <span className="text-[#FF2E51]">*</span>
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                    <User className="w-4 h-4" />
-                  </div>
-                  <select
-                    value={formData.teammate.gender}
-                    onChange={(e) => handleTeammateChange('gender', e.target.value)}
-                    className={`w-full bg-white border-2 text-black text-xs sm:text-sm font-mono py-2.5 pl-9 pr-8 focus:outline-none focus:ring-0 ${
-                      formErrors.teammate_gender
-                        ? 'border-[#FF2E51] bg-red-50/20'
-                        : 'border-black focus:border-[#FF2E51]'
-                    }`}
-                  >
-                    <option value="">Select Gender</option>
-                    {GENDERS.map((g) => (
-                      <option key={g} value={g}>
-                        {g}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {formErrors.teammate_gender && (
-                  <p className="text-[11px] font-mono text-[#FF2E51] font-semibold">
-                    {formErrors.teammate_gender}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Teammate Residence */}
-            <div className="space-y-2">
-              <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
-                RESIDENCE TYPE <span className="text-[#FF2E51]">*</span>
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {RESIDENCE_TYPES.map((res) => {
-                  const isChecked = formData.teammate.residence === res.value;
-                  return (
-                    <label
-                      key={res.value}
-                      className={`flex items-start gap-3 p-3.5 border-2 cursor-pointer transition-all ${
-                        isChecked
-                          ? 'border-black bg-white shadow-neo-sm ring-1 ring-black'
-                          : 'border-black/30 bg-white/70 hover:border-black'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="teammate_residence"
-                        value={res.value}
-                        checked={isChecked}
-                        onChange={(e) => handleTeammateChange('residence', e.target.value)}
-                        className="mt-0.5 text-[#FF2E51] focus:ring-[#FF2E51]"
-                      />
-                      <div>
-                        <div className="font-mono font-bold text-xs uppercase text-black">
-                          {res.label}
-                        </div>
-                        <div className="text-[11px] font-sans text-gray-500">
-                          {res.description}
-                        </div>
-                      </div>
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 pt-4 border-t-2 border-black/10">
-            <button
-              type="button"
-              onClick={() => setCurrentStep(1)}
-              className="neo-button bg-white text-black px-5 py-2.5 text-xs font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-gray-100 w-full sm:w-auto"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              <span>BACK TO MEMBER DETAILS</span>
-            </button>
-
-            <button
-              type="submit"
-              className="neo-button bg-[#FF2E51] text-white px-8 py-3 text-xs sm:text-sm font-mono font-bold tracking-wider uppercase flex items-center justify-center gap-2 hover:bg-[#e02445] w-full sm:w-auto"
-            >
-              <span>NEXT</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-        </form>
-      )}
-
-      {/* STEP 3: EMAIL VERIFICATION (Slide 3) */}
-      {currentStep === 3 && (
-        <OtpVerificationStep
-          formData={formData}
-          onConfirmedSubmit={handleConfirmedSubmit}
-          onBack={() => {
-            setCurrentStep(formData.registrationType === 'team' ? 2 : 1);
-            window.scrollTo({ top: 80, behavior: 'smooth' });
-          }}
-        />
-      )}
-
-      {/* STEP 4: SUCCESS PASS (Slide 4 - "You're In, Crewmate") */}
-      {currentStep === 4 && (
         <SuccessStep
           registration={confirmedRegistration}
           onReset={handleReset}
