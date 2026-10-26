@@ -2,20 +2,20 @@ import React, { useEffect, useRef, useImperativeHandle, forwardRef, useState } f
 import { ShieldCheck, RefreshCw, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { DEFAULT_TURNSTILE_SITE_KEY } from '../utils/constants';
 
-const CLOUDFLARE_ALWAYS_PASS_KEY = '1x00000000000000000000AA';
-
 const TurnstileWidget = forwardRef(({ onVerify, onSuccess, onExpire, onError, label = 'Security Verification' }, ref) => {
   const containerRef = useRef(null);
   const widgetIdRef = useRef(null);
-  const [loadError, setLoadError] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
   const [isVerified, setIsVerified] = useState(false);
-  const [activeSiteKey, setActiveSiteKey] = useState(() => {
-    const envKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
-    return envKey || DEFAULT_TURNSTILE_SITE_KEY || CLOUDFLARE_ALWAYS_PASS_KEY;
-  });
+  const [isExpired, setIsExpired] = useState(false);
+
+  // Active site key strictly from env or project constants - NO dummy test bypass
+  const activeSiteKey = ((import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim()) || DEFAULT_TURNSTILE_SITE_KEY;
 
   const reset = () => {
     setIsVerified(false);
+    setIsExpired(false);
+    setErrorMessage(null);
     if (window.turnstile && widgetIdRef.current !== null) {
       try {
         window.turnstile.reset(widgetIdRef.current);
@@ -47,33 +47,32 @@ const TurnstileWidget = forwardRef(({ onVerify, onSuccess, onExpire, onError, la
         theme: 'light',
         callback: (token) => {
           setIsVerified(true);
-          setLoadError(false);
+          setIsExpired(false);
+          setErrorMessage(null);
           if (onVerify) onVerify(token);
           if (onSuccess) onSuccess(token);
         },
         'expired-callback': () => {
           setIsVerified(false);
+          setIsExpired(true);
+          setErrorMessage('Verification expired. Please re-check the security box.');
           if (onExpire) onExpire();
         },
-        'error-callback': () => {
-          // If custom key failed due to domain whitelist mismatch (invaliddomain), auto-recover to universal key
-          if (activeSiteKey !== CLOUDFLARE_ALWAYS_PASS_KEY) {
-            console.warn('Domain not whitelisted for custom Turnstile key. Auto-switching to Cloudflare universal test key...');
-            setActiveSiteKey(CLOUDFLARE_ALWAYS_PASS_KEY);
-          } else {
-            setIsVerified(false);
-            setLoadError(true);
-            if (onError) onError();
+        'error-callback': (errorCode) => {
+          setIsVerified(false);
+          let friendlyMsg = `Cloudflare security challenge failed (Code: ${errorCode || 'unknown'}).`;
+          if (errorCode === '110200') {
+            friendlyMsg = `Domain Authorization Error (110200): "${window.location.hostname}" is not added to allowed hostnames in Cloudflare Turnstile dashboard.`;
+          } else if (errorCode === '300030') {
+            friendlyMsg = 'Verification challenge timed out. Please click Reload below.';
           }
+          setErrorMessage(friendlyMsg);
+          if (onError) onError(friendlyMsg, errorCode);
         },
       });
     } catch (err) {
       console.error('Error rendering Turnstile:', err);
-      if (activeSiteKey !== CLOUDFLARE_ALWAYS_PASS_KEY) {
-        setActiveSiteKey(CLOUDFLARE_ALWAYS_PASS_KEY);
-      } else {
-        setLoadError(true);
-      }
+      setErrorMessage(err.message || 'Failed to initialize security verification widget.');
     }
   };
 
@@ -91,7 +90,7 @@ const TurnstileWidget = forwardRef(({ onVerify, onSuccess, onExpire, onError, la
           renderWidget();
         } else if (attempts > 30) {
           clearInterval(timerId);
-          setLoadError(true);
+          setErrorMessage('Cloudflare Turnstile script failed to load. Please check your network or adblocker.');
         }
       }, 100);
     }
@@ -106,14 +105,6 @@ const TurnstileWidget = forwardRef(({ onVerify, onSuccess, onExpire, onError, la
       }
     };
   }, [activeSiteKey]);
-
-  const handleUseTestPass = () => {
-    const dummyToken = `0.X_test_turnstile_pass_${Date.now()}`;
-    setIsVerified(true);
-    setLoadError(false);
-    if (onVerify) onVerify(dummyToken);
-    if (onSuccess) onSuccess(dummyToken);
-  };
 
   return (
     <div className="my-3 p-4 bg-white border-2 border-black shadow-neo-sm rounded-sm">
@@ -132,6 +123,14 @@ const TurnstileWidget = forwardRef(({ onVerify, onSuccess, onExpire, onError, la
               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
               VERIFIED
             </span>
+          ) : isExpired ? (
+            <span className="text-[10px] font-mono px-2 py-0.5 bg-amber-100 text-amber-800 border border-amber-600 font-bold">
+              EXPIRED
+            </span>
+          ) : errorMessage ? (
+            <span className="text-[10px] font-mono px-2 py-0.5 bg-red-100 text-red-800 border border-red-600 font-bold">
+              ERROR
+            </span>
           ) : (
             <span className="text-[10px] font-mono px-2 py-0.5 bg-amber-50 text-amber-800 border border-amber-400 font-bold">
               PENDING
@@ -141,32 +140,32 @@ const TurnstileWidget = forwardRef(({ onVerify, onSuccess, onExpire, onError, la
       </div>
 
       {/* Centered Turnstile Widget Container */}
-      <div className="w-full flex justify-center items-center py-2 text-center overflow-x-auto">
+      <div className="w-full flex justify-center items-center py-2 text-center overflow-x-auto min-h-[70px]">
         <div
           ref={containerRef}
-          className="min-h-[65px] flex items-center justify-center mx-auto text-center [&>div]:mx-auto [&>iframe]:mx-auto"
+          className="flex items-center justify-center mx-auto text-center [&>div]:mx-auto [&>iframe]:mx-auto"
         />
       </div>
 
-      {/* Fallback button if script is blocked by an adblocker */}
-      {loadError && (
-        <div className="mt-3 text-xs p-3 bg-amber-50 border-2 border-amber-400 text-amber-900 rounded space-y-2 text-center">
+      {/* Clear error feedback if challenge fails or domain not authorized */}
+      {errorMessage && (
+        <div className="mt-3 text-xs p-3 bg-red-50 border-2 border-[#FF2E51] text-red-900 rounded space-y-2 text-center">
           <div className="flex items-center justify-center gap-2">
-            <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
-            <p className="font-bold text-xs uppercase text-amber-950">
-              Turnstile Verification Assistance
+            <AlertCircle className="w-4 h-4 text-[#FF2E51] shrink-0" />
+            <p className="font-bold text-xs uppercase text-red-950">
+              Security Challenge Notice
             </p>
           </div>
-          <p className="text-[11px] text-gray-700 font-sans">
-            If Cloudflare Turnstile does not load on your browser, click below to verify immediately:
+          <p className="text-[11px] text-gray-800 font-mono leading-relaxed">
+            {errorMessage}
           </p>
           <button
             type="button"
-            onClick={handleUseTestPass}
-            className="w-full sm:w-auto px-4 py-2 bg-[#FF2E51] text-white font-mono font-bold text-xs hover:bg-[#e02445] transition-colors shadow-neo-sm inline-flex items-center justify-center gap-1.5"
+            onClick={reset}
+            className="w-full sm:w-auto px-4 py-1.5 bg-black text-white font-mono font-bold text-xs hover:bg-gray-800 transition-colors shadow-neo-sm inline-flex items-center justify-center gap-1.5"
           >
-            <CheckCircle2 className="w-4 h-4" />
-            <span>✓ Click to Complete Security Verification</span>
+            <RefreshCw className="w-3.5 h-3.5" />
+            <span>Reload Security Challenge</span>
           </button>
         </div>
       )}

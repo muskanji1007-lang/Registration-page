@@ -226,6 +226,8 @@ export const RegistrationPage = ({ onHome }) => {
 
   // Send OTP for Leader
   const handleSendLeaderOtp = async (isResend = false) => {
+    if (leaderLoading) return;
+
     if (!formData.leader.fullName.trim() || !formData.leader.studentNumber.trim()) {
       setLeaderError('Please fill Full Name and Student No. first.');
       return;
@@ -235,9 +237,14 @@ export const RegistrationPage = ({ onHome }) => {
       return;
     }
     if (!leaderToken) {
-      setLeaderError('Please complete the security check (CAPTCHA) box above first.');
+      setLeaderError('Please complete the security verification (CAPTCHA) challenge box below.');
       return;
     }
+
+    const tokenToSubmit = leaderToken;
+    // Single-use token: Immediately clear from state so it cannot be submitted twice
+    setLeaderToken('');
+    if (leaderTurnstileRef.current) leaderTurnstileRef.current.reset();
 
     setLeaderLoading(true);
     setLeaderError('');
@@ -248,22 +255,20 @@ export const RegistrationPage = ({ onHome }) => {
       const res = await sendFn({
         fullName: formData.leader.fullName.trim(),
         studentNumber: formData.leader.studentNumber.trim(),
-        turnstileToken: leaderToken,
+        turnstileToken: tokenToSubmit,
       });
 
       setLeaderOtpSent(true);
       setLeaderCooldown(60);
-      setLeaderSuccess(res.message || `Verification code sent to ${formData.leader.collegeEmail}`);
-      setLeaderToken('');
-      if (leaderTurnstileRef.current) leaderTurnstileRef.current.reset();
+      setLeaderSuccess(res.message || `Verification code sent to ${formData.leader.collegeEmail}. Valid for 10 minutes.`);
     } catch (err) {
       if (err.status === 429) {
-        setLeaderError('Rate Limit: Too many OTP requests. Please wait 1-2 minutes or switch to mobile data / hotspot.');
+        setLeaderError('Rate Limit Reached: Too many OTP requests. Please wait a few minutes before requesting again.');
+      } else if (err.status === 400) {
+        setLeaderError(err.message || 'Security verification failed or expired. Please solve the CAPTCHA challenge again.');
       } else {
         setLeaderError(err.message || 'Failed to dispatch OTP. Please check your details and try again.');
       }
-      setLeaderToken('');
-      if (leaderTurnstileRef.current) leaderTurnstileRef.current.reset();
     } finally {
       setLeaderLoading(false);
     }
@@ -271,6 +276,7 @@ export const RegistrationPage = ({ onHome }) => {
 
   // Verify Leader OTP
   const handleVerifyLeaderOtp = async () => {
+    if (leaderLoading) return;
     const cleanOtp = leaderOtp.trim();
     if (cleanOtp.length !== 6) {
       setLeaderError('Please enter the complete 6-digit OTP code.');
@@ -294,7 +300,7 @@ export const RegistrationPage = ({ onHome }) => {
         leader: { ...prev.leader, isVerified: true },
       }));
     } catch (err) {
-      setLeaderError(err.message || 'Invalid or expired OTP code. Please try again.');
+      setLeaderError(err.message || 'Invalid or expired OTP code. Please enter the latest code or request a new one.');
     } finally {
       setLeaderLoading(false);
     }
@@ -302,6 +308,8 @@ export const RegistrationPage = ({ onHome }) => {
 
   // Send OTP for Teammate
   const handleSendTeammateOtp = async (isResend = false) => {
+    if (teammateLoading) return;
+
     if (!formData.teammate.fullName.trim() || !formData.teammate.studentNumber.trim()) {
       setTeammateError('Please fill Teammate Full Name and Student No. first.');
       return;
@@ -311,9 +319,14 @@ export const RegistrationPage = ({ onHome }) => {
       return;
     }
     if (!teammateToken) {
-      setTeammateError('Please complete Teammate security check (CAPTCHA) box above first.');
+      setTeammateError('Please complete Teammate security verification (CAPTCHA) box below.');
       return;
     }
+
+    const tokenToSubmit = teammateToken;
+    // Single-use token: Immediately clear from state so it cannot be submitted twice
+    setTeammateToken('');
+    if (teammateTurnstileRef.current) teammateTurnstileRef.current.reset();
 
     setTeammateLoading(true);
     setTeammateError('');
@@ -324,22 +337,20 @@ export const RegistrationPage = ({ onHome }) => {
       const res = await sendFn({
         fullName: formData.teammate.fullName.trim(),
         studentNumber: formData.teammate.studentNumber.trim(),
-        turnstileToken: teammateToken,
+        turnstileToken: tokenToSubmit,
       });
 
       setTeammateOtpSent(true);
       setTeammateCooldown(60);
-      setTeammateSuccess(res.message || `Verification code sent to ${formData.teammate.collegeEmail}`);
-      setTeammateToken('');
-      if (teammateTurnstileRef.current) teammateTurnstileRef.current.reset();
+      setTeammateSuccess(res.message || `Verification code sent to ${formData.teammate.collegeEmail}. Valid for 10 minutes.`);
     } catch (err) {
       if (err.status === 429) {
-        setTeammateError('Rate Limit: Too many OTP requests. Please wait 1-2 minutes or switch to mobile data.');
+        setTeammateError('Rate Limit Reached: Too many OTP requests. Please wait a few minutes before requesting again.');
+      } else if (err.status === 400) {
+        setTeammateError(err.message || 'Teammate security verification failed or expired. Please solve the CAPTCHA challenge again.');
       } else {
         setTeammateError(err.message || 'Failed to dispatch OTP to Teammate.');
       }
-      setTeammateToken('');
-      if (teammateTurnstileRef.current) teammateTurnstileRef.current.reset();
     } finally {
       setTeammateLoading(false);
     }
@@ -1170,28 +1181,68 @@ export const RegistrationPage = ({ onHome }) => {
                         </div>
                       )}
 
-                      <div className="flex items-center gap-3 text-xs font-mono text-gray-500 pt-1">
-                        <button
-                          type="button"
-                          onClick={() => handleSendLeaderOtp(true)}
-                          disabled={leaderLoading || leaderCooldown > 0}
-                          className="underline hover:text-black disabled:opacity-50 disabled:no-underline"
-                        >
-                          {leaderCooldown > 0 ? `Resend OTP in ${leaderCooldown}s` : 'Resend OTP'}
-                        </button>
-                        <span>•</span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setLeaderOtpSent(false);
-                            setLeaderToken('');
-                            setLeaderOtp('');
-                            setLeaderError('');
-                          }}
-                          className="underline hover:text-black"
-                        >
-                          Change details
-                        </button>
+                      <div className="p-3 bg-gray-50 border border-gray-200 rounded space-y-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] font-mono">
+                          <span className="text-gray-600">Didn't receive email? Check spam folder first.</span>
+                          <span className="font-bold text-black">
+                            {leaderCooldown > 0 ? `Resend in ${leaderCooldown}s` : 'Resend available'}
+                          </span>
+                        </div>
+
+                        {leaderCooldown === 0 && (
+                          <div className="space-y-2 pt-2 border-t border-gray-200">
+                            <p className="text-[11px] text-amber-900 font-sans">
+                              Note: Requesting a new code will immediately invalidate previous codes. Solve the security box below to resend:
+                            </p>
+                            <TurnstileWidget
+                              ref={leaderTurnstileRef}
+                              onVerify={(token) => {
+                                setLeaderToken(token);
+                                setLeaderError('');
+                              }}
+                              onSuccess={(token) => {
+                                setLeaderToken(token);
+                                setLeaderError('');
+                              }}
+                              onError={(err) => setLeaderError(err || 'Security check failed. Please refresh or retry.')}
+                              onExpire={() => setLeaderToken('')}
+                              label="Security Check to Resend"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleSendLeaderOtp(true)}
+                              disabled={leaderLoading || !leaderToken}
+                              className="w-full neo-button bg-gray-900 text-white py-2 text-xs font-mono font-bold uppercase tracking-wider disabled:opacity-50 hover:bg-black flex items-center justify-center gap-2"
+                            >
+                              {leaderLoading ? (
+                                <>
+                                  <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                  <span>RESENDING OTP...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <RefreshCw className="w-3.5 h-3.5" />
+                                  <span>RESEND NEW OTP CODE</span>
+                                </>
+                              )}
+                            </button>
+                          </div>
+                        )}
+
+                        <div className="pt-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setLeaderOtpSent(false);
+                              setLeaderToken('');
+                              setLeaderOtp('');
+                              setLeaderError('');
+                            }}
+                            className="text-[11px] font-mono text-gray-500 hover:text-black underline"
+                          >
+                            ← Change details or re-verify
+                          </button>
+                        </div>
                       </div>
                     </div>
                   )}
@@ -1325,17 +1376,68 @@ export const RegistrationPage = ({ onHome }) => {
                           </div>
                         )}
 
-                        <div className="flex items-center gap-3 text-xs font-mono text-gray-500 pt-1">
-                          <button
-                            type="button"
-                            onClick={() => handleSendTeammateOtp(true)}
-                            disabled={teammateLoading || teammateCooldown > 0}
-                            className="underline hover:text-black disabled:opacity-50 disabled:no-underline"
-                          >
-                            {teammateCooldown > 0
-                              ? `Resend OTP in ${teammateCooldown}s`
-                              : 'Resend OTP'}
-                          </button>
+                        <div className="p-3 bg-gray-50 border border-gray-200 rounded space-y-3">
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-[11px] font-mono">
+                            <span className="text-gray-600">Didn't receive email? Check spam folder first.</span>
+                            <span className="font-bold text-black">
+                              {teammateCooldown > 0 ? `Resend in ${teammateCooldown}s` : 'Resend available'}
+                            </span>
+                          </div>
+
+                          {teammateCooldown === 0 && (
+                            <div className="space-y-2 pt-2 border-t border-gray-200">
+                              <p className="text-[11px] text-amber-900 font-sans">
+                                Note: Requesting a new code will immediately invalidate previous codes. Solve the security box below to resend:
+                              </p>
+                              <TurnstileWidget
+                                ref={teammateTurnstileRef}
+                                onVerify={(token) => {
+                                  setTeammateToken(token);
+                                  setTeammateError('');
+                                }}
+                                onSuccess={(token) => {
+                                  setTeammateToken(token);
+                                  setTeammateError('');
+                                }}
+                                onError={(err) => setTeammateError(err || 'Security check failed. Please refresh or retry.')}
+                                onExpire={() => setTeammateToken('')}
+                                label="Security Check to Resend"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleSendTeammateOtp(true)}
+                                disabled={teammateLoading || !teammateToken}
+                                className="w-full neo-button bg-gray-900 text-white py-2 text-xs font-mono font-bold uppercase tracking-wider disabled:opacity-50 hover:bg-black flex items-center justify-center gap-2"
+                              >
+                                {teammateLoading ? (
+                                  <>
+                                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                                    <span>RESENDING OTP...</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <RefreshCw className="w-3.5 h-3.5" />
+                                    <span>RESEND TEAMMATE OTP</span>
+                                  </>
+                                )}
+                              </button>
+                            </div>
+                          )}
+
+                          <div className="pt-1">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setTeammateOtpSent(false);
+                                setTeammateToken('');
+                                setTeammateOtp('');
+                                setTeammateError('');
+                              }}
+                              className="text-[11px] font-mono text-gray-500 hover:text-black underline"
+                            >
+                              ← Change teammate details or re-verify
+                            </button>
+                          </div>
                         </div>
                       </div>
                     )}
