@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, ChevronDown, GraduationCap, Users, Code, MapPin, Bug } from 'lucide-react';
 import TerminalBox from '../components/TerminalBox';
 import Crewmate from '../components/Crewmate';
+import DebugXLogo from '../components/DebugXLogo';
 
 export const HomePage = ({ onRegisterClick, onRulesClick }) => {
   return (
@@ -18,36 +19,11 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
       <div className="neo-box-xl p-6 md:p-10 relative overflow-hidden bg-[#FCFAF6]">
         {/* Top Graphic Header: DeBugX Title + Crewmate */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-8 border-b-2 border-black/10">
-          {/* Stylized DeBugX Logo Typography with Halftone Pattern */}
-          <div className="relative select-none">
-            <div className="flex items-baseline font-display font-extrabold text-4xl sm:text-7xl md:text-8xl tracking-tighter italic">
-              {/* DeBug */}
-              <div className="relative text-black">
-                <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-b from-gray-900 to-black stroke-black">
-                  DeBu
-                </span>
-                {/* Letter 'g' with integrated red bug */}
-                <span className="relative inline-block z-10 text-black">
-                  g
-                  <span className="absolute top-[28%] left-[22%] w-3 h-3 md:w-4 md:h-4 bg-[#FF2E51] rounded-full border border-black flex items-center justify-center">
-                    <span className="w-1 h-1 bg-black rounded-full" />
-                  </span>
-                </span>
-                {/* Dot matrix overlay simulation */}
-                <div className="absolute inset-0 halftone-dots opacity-20 pointer-events-none" />
-              </div>
-
-              {/* X in Hot Magenta/Pink */}
-              <div className="relative text-[#EC4899] ml-1">
-                <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-tr from-[#FF2E51] via-[#EC4899] to-[#F43F5E] drop-shadow-[2px_2px_0px_#000]">
-                  X
-                </span>
-                <div className="absolute inset-0 halftone-dots-pink opacity-30 pointer-events-none" />
-              </div>
-            </div>
-            {/* Sub-tag underneath */}
-            <div className="text-[11px] font-mono tracking-widest text-gray-500 font-semibold uppercase mt-1">
-              // CLOUD COMPUTING CELL // EDITION 2026
+          {/* Stylized DeBugX Logo Typography with Halftone Pattern (Exact match to uploaded logo) */}
+          <div className="relative select-none space-y-1">
+            <DebugXLogo size="xl" />
+            <div className="text-[11px] font-mono tracking-widest text-gray-500 font-semibold uppercase">
+              CLOUD COMPUTING CELL • EDITION 2026
             </div>
           </div>
 
@@ -89,7 +65,7 @@ export const HomePage = ({ onRegisterClick, onRulesClick }) => {
             <div className="pt-2">
               <span className="text-xs font-mono font-bold px-2.5 py-1 bg-emerald-100 text-emerald-800 border border-black shadow-neo-sm inline-flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                100% FREE ENTRY // EXCLUSIVELY FOR 2ND-YEAR AKGEC STUDENTS
+                100% FREE ENTRY • EXCLUSIVELY FOR 2ND-YEAR AKGEC STUDENTS
               </span>
             </div>
           </div>

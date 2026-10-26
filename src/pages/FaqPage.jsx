@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
+import DebugXLogo from '../components/DebugXLogo';
 
 export const FaqPage = ({ onRegisterClick, onHome }) => {
   // Active accordion index (0 is open by default matching Slide)
@@ -75,69 +76,9 @@ export const FaqPage = ({ onRegisterClick, onHome }) => {
           })}
         </div>
 
-        {/* Retro Halftone DeBugX Logo (Exact match to Slide) */}
+        {/* Retro Halftone DeBugX Logo */}
         <div className="flex justify-center pt-4">
-          <svg
-            viewBox="0 0 360 80"
-            className="w-full max-w-[340px] drop-shadow-sm select-none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <defs>
-              {/* Halftone Dot Pattern */}
-              <pattern
-                id="faq-dot-grid"
-                x="0"
-                y="0"
-                width="6"
-                height="6"
-                patternUnits="userSpaceOnUse"
-              >
-                <circle cx="3" cy="3" r="1.6" fill="#1E293B" />
-              </pattern>
-              {/* Pink Halftone Dot Pattern for X */}
-              <pattern
-                id="faq-pink-dot-grid"
-                x="0"
-                y="0"
-                width="6"
-                height="6"
-                patternUnits="userSpaceOnUse"
-              >
-                <circle cx="3" cy="3" r="1.6" fill="#FF2E51" />
-              </pattern>
-            </defs>
-
-            {/* Stylized Slanted Retro Text "DeBug" */}
-            <text
-              x="20"
-              y="60"
-              fontFamily="monospace, sans-serif"
-              fontSize="52"
-              fontWeight="900"
-              fontStyle="italic"
-              fill="url(#faq-dot-grid)"
-              stroke="#000"
-              strokeWidth="2.5"
-              letterSpacing="2"
-            >
-              DeBug
-            </text>
-
-            {/* Stylized Pink X */}
-            <text
-              x="250"
-              y="60"
-              fontFamily="monospace, sans-serif"
-              fontSize="56"
-              fontWeight="900"
-              fontStyle="italic"
-              fill="url(#faq-pink-dot-grid)"
-              stroke="#000"
-              strokeWidth="2.5"
-            >
-              X
-            </text>
-          </svg>
+          <DebugXLogo size="lg" />
         </div>
 
         {/* Action Buttons */}

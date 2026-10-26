@@ -6,6 +6,7 @@ import RegistrationPage from './pages/RegistrationPage';
 import RulesPage from './pages/RulesPage';
 import FaqPage from './pages/FaqPage';
 import ReceiptLookupModal from './components/ReceiptLookupModal';
+import DebugXLogo from './components/DebugXLogo';
 
 export const App = () => {
   const [activePage, setActivePage] = useState('home');
@@ -90,27 +91,10 @@ export const App = () => {
         onClose={() => setIsLookupOpen(false)}
       />
 
-      {/* Retro Neobrutalist Footer */}
-      <footer className="w-full bg-[#FCFAF6] border-t-2 border-black py-6 px-4 mt-auto">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4 font-mono text-xs text-gray-700">
-          <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 bg-[#FF2E51]" />
-            <span className="font-bold text-black uppercase">
-              DeBugX 2026 // Bug Hunting Challenge
-            </span>
-          </div>
-
-          <div className="text-center md:text-right text-[11px] space-y-0.5">
-            <p className="font-semibold text-black">
-              Hosted by Cloud Computing Cell (CCC)
-            </p>
-            <p className="text-gray-500">
-              Ajay Kumar Garg Engineering College, Ghaziabad • 100% Free Entry
-            </p>
-            <p className="text-[10px] text-gray-400 font-mono tracking-tight pt-1">
-              © 2026 DeBugX • Developed by <span className="text-black font-bold">muskan gupta</span>
-            </p>
-          </div>
+      {/* Footer - Minimal DeBugX Only */}
+      <footer className="w-full bg-[#FCFAF6] border-t-2 border-black py-5 px-4 mt-auto">
+        <div className="max-w-6xl mx-auto flex items-center justify-center">
+          <DebugXLogo size="sm" />
         </div>
       </footer>
     </div>

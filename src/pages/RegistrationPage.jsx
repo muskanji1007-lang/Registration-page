@@ -290,8 +290,8 @@ export const RegistrationPage = ({ onHome }) => {
           <ArrowLeft className="w-4 h-4" />
           <span>&larr; BACK TO HOME</span>
         </button>
-        <span className="font-bold tracking-widest text-black">
-          DEBUGX 2026 // REGISTRATION DESK
+        <span className="font-bold tracking-widest text-black uppercase">
+          DeBugX 2026 • Registration Desk
         </span>
       </div>
 

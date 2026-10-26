@@ -8,7 +8,7 @@ export const TerminalBox = () => {
       <div className="flex items-center justify-between pb-2 mb-2 border-b-2 border-black/10">
         <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-gray-700 tracking-wider">
           <Terminal className="w-3.5 h-3.5 text-[#FF2E51]" />
-          <span>// MISSION DIRECTIVE</span>
+          <span>MISSION DIRECTIVE</span>
         </div>
         <Code2 className="w-4 h-4 text-gray-400" />
       </div>
@@ -29,7 +29,7 @@ export const TerminalBox = () => {
       {/* Live Terminal Screen */}
       <div className="bg-[#0D1117] text-white p-3 border border-black font-mono text-[11px] space-y-1 rounded-sm shadow-inner">
         <div className="flex items-center justify-between text-gray-400 pb-1 border-b border-gray-800 text-[10px]">
-          <span>// Live Terminal Check</span>
+          <span>Live Terminal Check</span>
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
         </div>
         <p className="text-gray-300">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { User, Menu, X, CheckCircle2, AlertTriangle, ArrowLeft } from 'lucide-react';
 import CccLogo from './CccLogo';
+import DebugXLogo from './DebugXLogo';
 import { apiService } from '../services/apiService';
 
 export const Navbar = ({ activePage, setActivePage, onAdminClick }) => {
@@ -46,15 +47,10 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick }) => {
           {/* Logo Brand */}
           <button
             onClick={() => setActivePage('home')}
-            className="flex items-center gap-2.5 group text-left"
+            className="flex items-center gap-2 group text-left"
           >
             <CccLogo className="w-8 h-8 transition-transform group-hover:rotate-12" />
-            <div className="flex items-baseline gap-1.5">
-              <span className="font-extrabold text-xl tracking-tight text-black font-display">
-                DEBUGX
-              </span>
-              <span className="text-sm font-bold text-[#FF2E51] font-mono">//</span>
-            </div>
+            <DebugXLogo size="xs" />
           </button>
 
           {/* Desktop Nav Items */}
