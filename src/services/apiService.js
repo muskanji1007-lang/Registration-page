@@ -137,6 +137,12 @@ export const apiService = {
       body: JSON.stringify(registrationPayload),
     }),
 
+  register: (registrationPayload) =>
+    request('/api/registrations', {
+      method: 'POST',
+      body: JSON.stringify(registrationPayload),
+    }),
+
   // 7. Get Ticket / Receipt Details
   getRegistrationReceipt: (registrationId, studentNumber) =>
     request(`/api/registrations/${registrationId}?studentNumber=${encodeURIComponent(studentNumber)}`, {

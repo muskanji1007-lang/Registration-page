@@ -230,8 +230,12 @@ export const RegistrationPage = ({ onHome }) => {
       setLeaderError('Please fill Full Name and Student No. first.');
       return;
     }
+    if (!formData.leader.collegeEmail) {
+      setLeaderError('Please enter a valid Student No. (e.g. 2410001) to generate your official college email.');
+      return;
+    }
     if (!leaderToken) {
-      setLeaderError('Please complete the security check (CAPTCHA) below.');
+      setLeaderError('Please complete the security check (CAPTCHA) box above first.');
       return;
     }
 
@@ -254,7 +258,7 @@ export const RegistrationPage = ({ onHome }) => {
       if (leaderTurnstileRef.current) leaderTurnstileRef.current.reset();
     } catch (err) {
       if (err.status === 429) {
-        setLeaderError('Rate Limit: Too many OTP requests from this network. Please wait 1-2 minutes or use mobile data / hotspot.');
+        setLeaderError('Rate Limit: Too many OTP requests. Please wait 1-2 minutes or switch to mobile data / hotspot.');
       } else {
         setLeaderError(err.message || 'Failed to dispatch OTP. Please check your details and try again.');
       }
@@ -302,8 +306,12 @@ export const RegistrationPage = ({ onHome }) => {
       setTeammateError('Please fill Teammate Full Name and Student No. first.');
       return;
     }
+    if (!formData.teammate.collegeEmail) {
+      setTeammateError('Please enter a valid Student No. (e.g. 2410002) to generate teammate official college email.');
+      return;
+    }
     if (!teammateToken) {
-      setTeammateError('Please complete Teammate security check below.');
+      setTeammateError('Please complete Teammate security check (CAPTCHA) box above first.');
       return;
     }
 
@@ -1070,14 +1078,25 @@ export const RegistrationPage = ({ onHome }) => {
                   <div className="flex justify-center py-1">
                     <TurnstileWidget
                       ref={leaderTurnstileRef}
+                      onVerify={(token) => {
+                        setLeaderToken(token);
+                        setLeaderError('');
+                      }}
                       onSuccess={(token) => {
                         setLeaderToken(token);
                         setLeaderError('');
                       }}
-                      onError={(err) => setLeaderError(err)}
+                      onError={(err) => setLeaderError(err || 'Security check failed. Please refresh or retry.')}
                       onExpire={() => setLeaderToken('')}
                     />
                   </div>
+
+                  {leaderToken && (
+                    <div className="p-2 bg-emerald-50 border border-emerald-400 text-emerald-800 font-mono text-xs font-bold flex items-center justify-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Security Verification Passed! Ready to send OTP.</span>
+                    </div>
+                  )}
 
                   {leaderError && (
                     <div className="p-3 bg-red-50 border-2 border-[#FF2E51] text-[#FF2E51] font-mono text-xs font-bold flex items-center gap-2">
@@ -1089,7 +1108,7 @@ export const RegistrationPage = ({ onHome }) => {
                   <button
                     type="button"
                     onClick={() => handleSendLeaderOtp(false)}
-                    disabled={leaderLoading || !leaderToken || !formData.leader.collegeEmail}
+                    disabled={leaderLoading}
                     className="w-full neo-button bg-[#FF2E51] text-white py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-[#e02445]"
                   >
                     {leaderLoading ? (
@@ -1215,14 +1234,25 @@ export const RegistrationPage = ({ onHome }) => {
                     <div className="flex justify-center py-1">
                       <TurnstileWidget
                         ref={teammateTurnstileRef}
+                        onVerify={(token) => {
+                          setTeammateToken(token);
+                          setTeammateError('');
+                        }}
                         onSuccess={(token) => {
                           setTeammateToken(token);
                           setTeammateError('');
                         }}
-                        onError={(err) => setTeammateError(err)}
+                        onError={(err) => setTeammateError(err || 'Security check failed. Please refresh or retry.')}
                         onExpire={() => setTeammateToken('')}
                       />
                     </div>
+
+                    {teammateToken && (
+                      <div className="p-2 bg-emerald-50 border border-emerald-400 text-emerald-800 font-mono text-xs font-bold flex items-center justify-center gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        <span>Teammate Security Verification Passed! Ready to send OTP.</span>
+                      </div>
+                    )}
 
                     {teammateError && (
                       <div className="p-3 bg-red-50 border-2 border-[#FF2E51] text-[#FF2E51] font-mono text-xs font-bold flex items-center gap-2">
@@ -1234,7 +1264,7 @@ export const RegistrationPage = ({ onHome }) => {
                     <button
                       type="button"
                       onClick={() => handleSendTeammateOtp(false)}
-                      disabled={teammateLoading || !teammateToken || !formData.teammate.collegeEmail}
+                      disabled={teammateLoading}
                       className="w-full neo-button bg-[#FF2E51] text-white py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-[#e02445]"
                     >
                       {teammateLoading ? (

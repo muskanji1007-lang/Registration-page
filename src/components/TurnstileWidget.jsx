@@ -4,14 +4,14 @@ import { DEFAULT_TURNSTILE_SITE_KEY } from '../utils/constants';
 
 const CLOUDFLARE_ALWAYS_PASS_KEY = '1x00000000000000000000AA';
 
-const TurnstileWidget = forwardRef(({ onVerify, onExpire, onError, label = 'Security Verification' }, ref) => {
+const TurnstileWidget = forwardRef(({ onVerify, onSuccess, onExpire, onError, label = 'Security Verification' }, ref) => {
   const containerRef = useRef(null);
   const widgetIdRef = useRef(null);
   const [loadError, setLoadError] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [activeSiteKey, setActiveSiteKey] = useState(() => {
     const envKey = (import.meta.env.VITE_TURNSTILE_SITE_KEY || '').trim();
-    return envKey || CLOUDFLARE_ALWAYS_PASS_KEY;
+    return envKey || DEFAULT_TURNSTILE_SITE_KEY || CLOUDFLARE_ALWAYS_PASS_KEY;
   });
 
   const reset = () => {
@@ -49,6 +49,7 @@ const TurnstileWidget = forwardRef(({ onVerify, onExpire, onError, label = 'Secu
           setIsVerified(true);
           setLoadError(false);
           if (onVerify) onVerify(token);
+          if (onSuccess) onSuccess(token);
         },
         'expired-callback': () => {
           setIsVerified(false);
@@ -111,6 +112,7 @@ const TurnstileWidget = forwardRef(({ onVerify, onExpire, onError, label = 'Secu
     setIsVerified(true);
     setLoadError(false);
     if (onVerify) onVerify(dummyToken);
+    if (onSuccess) onSuccess(dummyToken);
   };
 
   return (
