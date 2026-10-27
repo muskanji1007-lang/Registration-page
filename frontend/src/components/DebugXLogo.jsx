@@ -16,7 +16,7 @@ export const DebugXLogo = ({ size = 'md', className = '' }) => {
   return (
     <div className={`inline-flex items-center ${className}`}>
       <svg
-        viewBox="0 0 230 70"
+        viewBox="0 0 252 70"
         className={`${heightClass} w-auto select-none`}
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -66,9 +66,9 @@ export const DebugXLogo = ({ size = 'md', className = '' }) => {
           DeBug
         </text>
 
-        {/* X (Brought close to DeBug at x="180", was previously x="222") */}
+        {/* X (Balanced spacing matching Screenshot 3 at x="200") */}
         <text
-          x="180"
+          x="200"
           y="52"
           className="debugx-x-base"
           fontFamily="'Space Grotesk', 'Chakra Petch', Impact, sans-serif"
@@ -84,7 +84,7 @@ export const DebugXLogo = ({ size = 'md', className = '' }) => {
           X
         </text>
         <text
-          x="180"
+          x="200"
           y="52"
           fontFamily="'Space Grotesk', 'Chakra Petch', Impact, sans-serif"
           fontStyle="italic"
