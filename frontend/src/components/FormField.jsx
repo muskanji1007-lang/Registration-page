@@ -15,7 +15,9 @@ export const FormField = ({
   readOnly = false,
   helperText,
   rightBadge,
+  maxLength,
   children,
+  ...rest
 }) => {
   return (
     <div className="space-y-1.5 w-full">
@@ -67,6 +69,8 @@ export const FormField = ({
             placeholder={placeholder}
             disabled={disabled}
             readOnly={readOnly}
+            maxLength={maxLength}
+            {...rest}
             className={`w-full bg-white border-2 text-black text-xs sm:text-sm font-mono py-2.5 ${
               Icon ? 'pl-9' : 'pl-3'
             } pr-3 focus:outline-none focus:ring-0 transition-colors ${

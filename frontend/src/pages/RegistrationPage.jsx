@@ -173,11 +173,18 @@ export const RegistrationPage = ({ onHome }) => {
   }, [formData.teammate.fullName, formData.teammate.studentNumber, formData.registrationType]);
 
   const handleLeaderChange = (field, value) => {
+    let cleanVal = value;
+    if (field === 'phone') {
+      cleanVal = String(value).replace(/\D/g, '').slice(0, 10);
+    } else if (field === 'studentNumber') {
+      cleanVal = String(value).replace(/\D/g, '').slice(0, 8);
+    }
+
     setFormData((prev) => ({
       ...prev,
       leader: {
         ...prev.leader,
-        [field]: value,
+        [field]: cleanVal,
         ...(field === 'fullName' || field === 'studentNumber' ? { isVerified: false } : {}),
       },
     }));
@@ -200,11 +207,18 @@ export const RegistrationPage = ({ onHome }) => {
   };
 
   const handleTeammateChange = (field, value) => {
+    let cleanVal = value;
+    if (field === 'phone') {
+      cleanVal = String(value).replace(/\D/g, '').slice(0, 10);
+    } else if (field === 'studentNumber') {
+      cleanVal = String(value).replace(/\D/g, '').slice(0, 8);
+    }
+
     setFormData((prev) => ({
       ...prev,
       teammate: {
         ...prev.teammate,
-        [field]: value,
+        [field]: cleanVal,
         ...(field === 'fullName' || field === 'studentNumber' ? { isVerified: false } : {}),
       },
     }));
@@ -662,8 +676,9 @@ export const RegistrationPage = ({ onHome }) => {
                 label="STUDENT NO."
                 name="studentNumber"
                 icon={Hash}
+                maxLength={8}
                 value={formData.leader.studentNumber}
-                onChange={(e) => handleLeaderChange('studentNumber', e.target.value.replace(/\D/g, ''))}
+                onChange={(e) => handleLeaderChange('studentNumber', e.target.value.replace(/\D/g, '').slice(0, 8))}
                 placeholder="e.g. 24154046"
                 error={formErrors.leader_studentNumber}
                 helperText="Must start with 23, 24, or 25 (7 or 8 digits)"
@@ -690,10 +705,11 @@ export const RegistrationPage = ({ onHome }) => {
                 label="PHONE / WHATSAPP NUMBER"
                 name="phone"
                 type="tel"
+                maxLength={10}
                 icon={Phone}
                 value={formData.leader.phone}
-                onChange={(e) => handleLeaderChange('phone', e.target.value.replace(/\D/g, ''))}
-                placeholder="+91 98765 43210"
+                onChange={(e) => handleLeaderChange('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                placeholder="9876543210"
                 error={formErrors.leader_phone}
                 helperText="10-digit mobile number"
               />
@@ -894,9 +910,10 @@ export const RegistrationPage = ({ onHome }) => {
                   label="TEAMMATE STUDENT NO."
                   name="teammate_studentNumber"
                   icon={Hash}
+                  maxLength={8}
                   value={formData.teammate.studentNumber}
                   onChange={(e) =>
-                    handleTeammateChange('studentNumber', e.target.value.replace(/\D/g, ''))
+                    handleTeammateChange('studentNumber', e.target.value.replace(/\D/g, '').slice(0, 8))
                   }
                   placeholder="e.g. 2412214"
                   error={formErrors.teammate_studentNumber}
@@ -921,12 +938,13 @@ export const RegistrationPage = ({ onHome }) => {
                   label="TEAMMATE PHONE NUMBER"
                   name="teammate_phone"
                   type="tel"
+                  maxLength={10}
                   icon={Phone}
                   value={formData.teammate.phone}
                   onChange={(e) =>
-                    handleTeammateChange('phone', e.target.value.replace(/\D/g, ''))
+                    handleTeammateChange('phone', e.target.value.replace(/\D/g, '').slice(0, 10))
                   }
-                  placeholder="+91 98765 43210"
+                  placeholder="9876543210"
                   error={formErrors.teammate_phone}
                   helperText="10-digit mobile number"
                 />
