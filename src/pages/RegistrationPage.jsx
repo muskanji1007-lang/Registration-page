@@ -11,8 +11,10 @@ import {
   CheckCircle2,
   AlertCircle,
   RefreshCw,
+  Lock,
 } from 'lucide-react';
 import FormField from '../components/FormField';
+import CustomSelect from '../components/CustomSelect';
 import Crewmate from '../components/Crewmate';
 import TurnstileWidget from '../components/TurnstileWidget';
 import RegistrationStepper from '../components/RegistrationStepper';
@@ -387,6 +389,42 @@ export const RegistrationPage = ({ onHome }) => {
     }
   };
 
+  const handleLeaderResetToCaptcha = () => {
+    setLeaderOtpSent(false);
+    setLeaderOtp('');
+    setLeaderToken('');
+    setLeaderError('');
+    setLeaderSuccess('');
+    setLeaderVerified(false);
+    setFormData((prev) => ({
+      ...prev,
+      leader: { ...prev.leader, isVerified: false },
+    }));
+    if (leaderTurnstileRef.current) {
+      try {
+        leaderTurnstileRef.current.reset();
+      } catch (_) {}
+    }
+  };
+
+  const handleTeammateResetToCaptcha = () => {
+    setTeammateOtpSent(false);
+    setTeammateOtp('');
+    setTeammateToken('');
+    setTeammateError('');
+    setTeammateSuccess('');
+    setTeammateVerified(false);
+    setFormData((prev) => ({
+      ...prev,
+      teammate: { ...prev.teammate, isVerified: false },
+    }));
+    if (teammateTurnstileRef.current) {
+      try {
+        teammateTurnstileRef.current.reset();
+      } catch (_) {}
+    }
+  };
+
   // Final Form Validation and Submission
   const handleSubmitRegistration = async (e) => {
     e.preventDefault();
@@ -661,70 +699,32 @@ export const RegistrationPage = ({ onHome }) => {
               />
 
               {/* Branch & Section */}
-              <div className="space-y-1.5 w-full">
-                <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
-                  BRANCH &amp; SECTION <span className="text-[#FF2E51]">*</span>
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                    <GraduationCap className="w-4 h-4" />
-                  </div>
-                  <select
-                    value={formData.leader.branch}
-                    onChange={(e) => handleLeaderChange('branch', e.target.value)}
-                    className={`w-full bg-white border-2 text-black text-xs sm:text-sm font-mono py-2.5 pl-9 pr-8 focus:outline-none focus:ring-0 ${
-                      formErrors.leader_branch
-                        ? 'border-[#FF2E51] bg-red-50/20'
-                        : 'border-black focus:border-[#FF2E51]'
-                    }`}
-                  >
-                    <option value="">Select your Branch &amp; Section</option>
-                    {BRANCHES.map((b) => (
-                      <option key={b} value={b}>
-                        {b}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {formErrors.leader_branch && (
-                  <p className="text-[11px] font-mono text-[#FF2E51] font-semibold">
-                    {formErrors.leader_branch}
-                  </p>
-                )}
-              </div>
+              <CustomSelect
+                label="BRANCH & SECTION"
+                name="branch"
+                icon={GraduationCap}
+                value={formData.leader.branch}
+                onChange={(val) =>
+                  handleLeaderChange('branch', typeof val === 'object' && val?.target ? val.target.value : val)
+                }
+                options={BRANCHES}
+                placeholder="Select your Branch & Section"
+                error={formErrors.leader_branch}
+              />
 
               {/* Gender */}
-              <div className="space-y-1.5 w-full">
-                <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
-                  GENDER <span className="text-[#FF2E51]">*</span>
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                    <User className="w-4 h-4" />
-                  </div>
-                  <select
-                    value={formData.leader.gender}
-                    onChange={(e) => handleLeaderChange('gender', e.target.value)}
-                    className={`w-full bg-white border-2 text-black text-xs sm:text-sm font-mono py-2.5 pl-9 pr-8 focus:outline-none focus:ring-0 ${
-                      formErrors.leader_gender
-                        ? 'border-[#FF2E51] bg-red-50/20'
-                        : 'border-black focus:border-[#FF2E51]'
-                    }`}
-                  >
-                    <option value="">Select Gender</option>
-                    {GENDERS.map((g) => (
-                      <option key={g} value={g}>
-                        {g}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                {formErrors.leader_gender && (
-                  <p className="text-[11px] font-mono text-[#FF2E51] font-semibold">
-                    {formErrors.leader_gender}
-                  </p>
-                )}
-              </div>
+              <CustomSelect
+                label="GENDER"
+                name="gender"
+                icon={User}
+                value={formData.leader.gender}
+                onChange={(val) =>
+                  handleLeaderChange('gender', typeof val === 'object' && val?.target ? val.target.value : val)
+                }
+                options={GENDERS}
+                placeholder="Select Gender"
+                error={formErrors.leader_gender}
+              />
             </div>
 
             {/* Residence Type */}
@@ -932,70 +932,32 @@ export const RegistrationPage = ({ onHome }) => {
                 />
 
                 {/* Branch */}
-                <div className="space-y-1.5 w-full">
-                  <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
-                    BRANCH &amp; SECTION <span className="text-[#FF2E51]">*</span>
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                      <GraduationCap className="w-4 h-4" />
-                    </div>
-                    <select
-                      value={formData.teammate.branch}
-                      onChange={(e) => handleTeammateChange('branch', e.target.value)}
-                      className={`w-full bg-white border-2 text-black text-xs sm:text-sm font-mono py-2.5 pl-9 pr-8 focus:outline-none focus:ring-0 ${
-                        formErrors.teammate_branch
-                          ? 'border-[#FF2E51] bg-red-50/20'
-                          : 'border-black focus:border-[#FF2E51]'
-                      }`}
-                    >
-                      <option value="">Select Branch &amp; Section</option>
-                      {BRANCHES.map((b) => (
-                        <option key={b} value={b}>
-                          {b}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  {formErrors.teammate_branch && (
-                    <p className="text-[11px] font-mono text-[#FF2E51] font-semibold">
-                      {formErrors.teammate_branch}
-                    </p>
-                  )}
-                </div>
+                <CustomSelect
+                  label="TEAMMATE BRANCH & SECTION"
+                  name="teammate_branch"
+                  icon={GraduationCap}
+                  value={formData.teammate.branch}
+                  onChange={(val) =>
+                    handleTeammateChange('branch', typeof val === 'object' && val?.target ? val.target.value : val)
+                  }
+                  options={BRANCHES}
+                  placeholder="Select Branch & Section"
+                  error={formErrors.teammate_branch}
+                />
 
                 {/* Gender */}
-                <div className="space-y-1.5 w-full">
-                  <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
-                    GENDER <span className="text-[#FF2E51]">*</span>
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-500">
-                      <User className="w-4 h-4" />
-                    </div>
-                    <select
-                      value={formData.teammate.gender}
-                      onChange={(e) => handleTeammateChange('gender', e.target.value)}
-                      className={`w-full bg-white border-2 text-black text-xs sm:text-sm font-mono py-2.5 pl-9 pr-8 focus:outline-none focus:ring-0 ${
-                        formErrors.teammate_gender
-                          ? 'border-[#FF2E51] bg-red-50/20'
-                          : 'border-black focus:border-[#FF2E51]'
-                      }`}
-                    >
-                      <option value="">Select Gender</option>
-                      {GENDERS.map((g) => (
-                        <option key={g} value={g}>
-                          {g}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  {formErrors.teammate_gender && (
-                    <p className="text-[11px] font-mono text-[#FF2E51] font-semibold">
-                      {formErrors.teammate_gender}
-                    </p>
-                  )}
-                </div>
+                <CustomSelect
+                  label="TEAMMATE GENDER"
+                  name="teammate_gender"
+                  icon={User}
+                  value={formData.teammate.gender}
+                  onChange={(val) =>
+                    handleTeammateChange('gender', typeof val === 'object' && val?.target ? val.target.value : val)
+                  }
+                  options={GENDERS}
+                  placeholder="Select Gender"
+                  error={formErrors.teammate_gender}
+                />
               </div>
 
               {/* Residence */}
@@ -1059,16 +1021,22 @@ export const RegistrationPage = ({ onHome }) => {
             <div className="p-5 bg-white border-2 border-black shadow-neo-sm space-y-4">
               <div className="flex items-center justify-between pb-2 border-b border-black/10">
                 <span className="text-xs font-mono font-bold uppercase text-black">
-                  {formData.registrationType === 'team' ? 'LEADER EMAIL VERIFICATION' : 'CANDIDATE EMAIL VERIFICATION'}
+                  {formData.registrationType === 'team'
+                    ? '1. LEADER EMAIL VERIFICATION'
+                    : 'CANDIDATE EMAIL VERIFICATION'}
                 </span>
                 {leaderVerified ? (
-                  <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-emerald-600">
+                  <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 border border-emerald-500">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>VERIFIED ✓</span>
                   </span>
+                ) : leaderOtpSent ? (
+                  <span className="text-[10px] font-mono font-bold text-sky-600 bg-sky-50 px-2 py-0.5 border border-sky-400 uppercase">
+                    STEP 2: ENTER OTP
+                  </span>
                 ) : (
-                  <span className="text-[10px] font-mono font-bold text-[#FF2E51] uppercase">
-                    PENDING OTP
+                  <span className="text-[10px] font-mono font-bold text-[#FF2E51] bg-red-50 px-2 py-0.5 border border-[#FF2E51] uppercase">
+                    STEP 1: CAPTCHA
                   </span>
                 )}
               </div>
@@ -1076,65 +1044,98 @@ export const RegistrationPage = ({ onHome }) => {
               <div className="text-xs font-mono text-gray-600">
                 Official Email:{' '}
                 <strong className="text-black">
-                  {formData.leader.collegeEmail || '(Enter Student No. to preview)'}
+                  {formData.leader.collegeEmail || '(Enter Student No. in Section 1 to preview)'}
                 </strong>
               </div>
 
               {leaderVerified ? (
-                <div className="p-4 bg-emerald-50 border-2 border-emerald-500 rounded text-emerald-900 font-mono text-xs flex items-center gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                  <div>
-                    <span className="font-bold text-sm block">Email Verified Successfully!</span>
-                    <span>{formData.leader.collegeEmail} is authorized.</span>
+                /* State 3: Successfully Verified */
+                <div className="p-4 bg-emerald-50 border-2 border-emerald-500 rounded text-emerald-900 font-mono text-xs flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                    <div>
+                      <span className="font-bold text-sm block">Email Verified Successfully!</span>
+                      <span className="text-gray-700">{formData.leader.collegeEmail} is authorized.</span>
+                    </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={handleLeaderResetToCaptcha}
+                    className="text-[11px] font-mono font-bold text-gray-600 hover:text-black underline uppercase"
+                  >
+                    Re-verify
+                  </button>
+                </div>
+              ) : !leaderOtpSent ? (
+                /* State 1: Security Verification (CAPTCHA ONLY - Step 1 of 2) */
+                <div className="space-y-4">
+                  <div className="p-3 bg-amber-50 border border-amber-300 text-amber-900 font-mono text-xs">
+                    <span className="font-bold block mb-0.5">STEP 1 OF 2 // SECURITY VERIFICATION</span>
+                    <span>Complete the security check below to enable OTP dispatch to your email.</span>
+                  </div>
+
+                  <div className="flex justify-center py-1">
+                    <TurnstileWidget
+                      ref={leaderTurnstileRef}
+                      onVerify={(token) => {
+                        setLeaderToken(token);
+                        setLeaderError('');
+                      }}
+                      onSuccess={(token) => {
+                        setLeaderToken(token);
+                        setLeaderError('');
+                      }}
+                      onError={(err) =>
+                        setLeaderError(err || 'Security check failed. Please refresh or retry.')
+                      }
+                      onExpire={() => setLeaderToken('')}
+                      label="Security Verification"
+                    />
+                  </div>
+
+                  {leaderToken && (
+                    <div className="p-2.5 bg-emerald-50 border border-emerald-500 text-emerald-800 font-mono text-xs font-bold flex items-center justify-center gap-1.5">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                      <span>Security Verification Passed! Ready to send OTP.</span>
+                    </div>
+                  )}
+
+                  {leaderError && (
+                    <div className="p-3 bg-red-50 border-2 border-[#FF2E51] text-[#FF2E51] font-mono text-xs font-bold flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0" />
+                      <span>{leaderError}</span>
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => handleSendLeaderOtp(false)}
+                    disabled={leaderLoading}
+                    className="w-full neo-button bg-[#FF2E51] text-white py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-[#e02445]"
+                  >
+                    {leaderLoading ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>DISPATCHING OTP...</span>
+                      </>
+                    ) : (
+                      <span>SEND VERIFICATION OTP →</span>
+                    )}
+                  </button>
                 </div>
               ) : (
-                <div className="space-y-5">
-                  {/* Step A: Security Challenge & Send OTP */}
-                  <div className="space-y-3">
-                    <p className="text-xs font-sans text-gray-600 leading-relaxed">
-                      Complete the security check below, then click Send OTP to dispatch your 6-digit code.
-                    </p>
-
-                    <div className="flex justify-center py-1">
-                      <TurnstileWidget
-                        ref={leaderTurnstileRef}
-                        onVerify={(token) => {
-                          setLeaderToken(token);
-                          setLeaderError('');
-                        }}
-                        onSuccess={(token) => {
-                          setLeaderToken(token);
-                          setLeaderError('');
-                        }}
-                        onError={(err) => setLeaderError(err || 'Security check failed. Please refresh or retry.')}
-                        onExpire={() => setLeaderToken('')}
-                        label="Security Verification"
-                      />
+                /* State 2: Enter 6-Digit Email OTP (CAPTCHA is hidden - Step 2 of 2) */
+                <div className="space-y-4 animate-in fade-in duration-200">
+                  <div className="p-3 bg-sky-50 border border-sky-400 text-sky-900 font-mono text-xs space-y-1">
+                    <div className="flex items-center gap-1.5 font-bold text-sky-950">
+                      <Mail className="w-4 h-4 text-sky-600" />
+                      <span>STEP 2 OF 2 // ENTER 6-DIGIT OTP</span>
                     </div>
-
-                    {leaderToken && (
-                      <div className="p-2 bg-emerald-50 border border-emerald-400 text-emerald-800 font-mono text-xs font-bold flex items-center justify-center gap-1.5">
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                        <span>Security Verification Passed! Ready to send OTP.</span>
-                      </div>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={() => handleSendLeaderOtp(leaderOtpSent)}
-                      disabled={leaderLoading}
-                      className="w-full neo-button bg-[#FF2E51] text-white py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-[#e02445]"
-                    >
-                      {leaderLoading ? (
-                        <>
-                          <RefreshCw className="w-4 h-4 animate-spin" />
-                          <span>SENDING OTP...</span>
-                        </>
-                      ) : (
-                        <span>{leaderOtpSent ? 'RESEND VERIFICATION OTP' : 'SEND VERIFICATION OTP'}</span>
-                      )}
-                    </button>
+                    <p className="text-[11px] text-sky-800 font-sans">
+                      Verification code dispatched to{' '}
+                      <strong className="font-mono text-black">{formData.leader.collegeEmail}</strong>. Valid for
+                      10 minutes (please check Spam/Junk folder).
+                    </p>
                   </div>
 
                   {leaderSuccess && (
@@ -1151,51 +1152,58 @@ export const RegistrationPage = ({ onHome }) => {
                     </div>
                   )}
 
-                  {/* Step B: 6-Digit OTP Input Field (ALWAYS VISIBLE) */}
-                  <div className="pt-4 border-t-2 border-black/10 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
-                        ENTER 6-DIGIT OTP CODE
-                      </label>
-                      {leaderOtpSent && leaderCooldown > 0 && (
-                        <span className="text-[11px] font-mono text-gray-500">
-                          Resend cooldown: {leaderCooldown}s
-                        </span>
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      autoFocus
+                      value={leaderOtp}
+                      onChange={(e) => setLeaderOtp(e.target.value.replace(/\D/g, ''))}
+                      placeholder="••••••"
+                      className="bg-white border-2 border-black text-black font-mono text-2xl tracking-[0.3em] px-4 py-2.5 text-center w-full sm:w-48 focus:outline-none focus:border-[#FF2E51] shadow-inner"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleVerifyLeaderOtp}
+                      disabled={leaderLoading || leaderOtp.trim().length !== 6}
+                      className="neo-button bg-black text-white px-7 py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider hover:bg-gray-800 disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      {leaderLoading ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <span>VERIFYING CODE...</span>
+                        </>
+                      ) : (
+                        <span>VERIFY CODE ✓</span>
                       )}
-                    </div>
+                    </button>
+                  </div>
 
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        maxLength={6}
-                        value={leaderOtp}
-                        onChange={(e) => setLeaderOtp(e.target.value.replace(/\D/g, ''))}
-                        placeholder="••••••"
-                        className="bg-white border-2 border-black text-black font-mono text-xl tracking-[0.3em] px-4 py-2 text-center w-full sm:w-48 focus:outline-none focus:border-[#FF2E51]"
-                      />
+                  {/* Resend and Navigation */}
+                  <div className="pt-2 border-t border-black/10 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                    {leaderCooldown > 0 ? (
+                      <span className="text-gray-500">
+                        Resend available in <strong className="text-black">{leaderCooldown}s</strong>
+                      </span>
+                    ) : (
                       <button
                         type="button"
-                        onClick={handleVerifyLeaderOtp}
-                        disabled={leaderLoading || leaderOtp.trim().length !== 6}
-                        className="neo-button bg-black text-white px-6 py-2.5 text-xs font-mono font-bold uppercase tracking-wider hover:bg-gray-800 disabled:opacity-50 flex items-center justify-center gap-2"
+                        onClick={handleLeaderResetToCaptcha}
+                        className="text-[#FF2E51] font-bold hover:underline flex items-center gap-1"
                       >
-                        {leaderLoading ? (
-                          <>
-                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                            <span>VERIFYING...</span>
-                          </>
-                        ) : (
-                          <span>VERIFY CODE →</span>
-                        )}
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        <span>Resend OTP (Re-verify CAPTCHA)</span>
                       </button>
-                    </div>
+                    )}
 
-                    <p className="text-[11px] font-sans text-gray-500">
-                      {leaderOtpSent
-                        ? 'Enter the 6-digit verification code sent to your official email. Valid for 10 minutes (check Spam folder).'
-                        : 'First complete the security challenge and click SEND VERIFICATION OTP above, then enter your 6-digit code here.'}
-                    </p>
+                    <button
+                      type="button"
+                      onClick={handleLeaderResetToCaptcha}
+                      className="text-gray-600 hover:text-black hover:underline"
+                    >
+                      ← Back to Step 1
+                    </button>
                   </div>
                 </div>
               )}
@@ -1206,16 +1214,24 @@ export const RegistrationPage = ({ onHome }) => {
               <div className="p-5 bg-white border-2 border-black shadow-neo-sm space-y-4">
                 <div className="flex items-center justify-between pb-2 border-b border-black/10">
                   <span className="text-xs font-mono font-bold uppercase text-black">
-                    TEAMMATE EMAIL VERIFICATION
+                    2. TEAMMATE EMAIL VERIFICATION
                   </span>
                   {teammateVerified ? (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-emerald-600">
+                    <span className="inline-flex items-center gap-1 text-[11px] font-mono font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 border border-emerald-500">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                       <span>VERIFIED ✓</span>
                     </span>
+                  ) : !leaderVerified ? (
+                    <span className="text-[10px] font-mono font-bold text-gray-500 bg-gray-100 px-2 py-0.5 border border-gray-300 uppercase">
+                      LOCKED
+                    </span>
+                  ) : teammateOtpSent ? (
+                    <span className="text-[10px] font-mono font-bold text-sky-600 bg-sky-50 px-2 py-0.5 border border-sky-400 uppercase">
+                      STEP 2: ENTER OTP
+                    </span>
                   ) : (
-                    <span className="text-[10px] font-mono font-bold text-[#FF2E51] uppercase">
-                      PENDING OTP
+                    <span className="text-[10px] font-mono font-bold text-[#FF2E51] bg-red-50 px-2 py-0.5 border border-[#FF2E51] uppercase">
+                      STEP 1: CAPTCHA
                     </span>
                   )}
                 </div>
@@ -1223,65 +1239,109 @@ export const RegistrationPage = ({ onHome }) => {
                 <div className="text-xs font-mono text-gray-600">
                   Official Email:{' '}
                   <strong className="text-black">
-                    {formData.teammate.collegeEmail || '(Enter Teammate Student No. to preview)'}
+                    {formData.teammate.collegeEmail || '(Enter Teammate Student No. in Section 3 to preview)'}
                   </strong>
                 </div>
 
-                {teammateVerified ? (
-                  <div className="p-4 bg-emerald-50 border-2 border-emerald-500 rounded text-emerald-900 font-mono text-xs flex items-center gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                {!leaderVerified ? (
+                  /* Locked state until Leader is verified */
+                  <div className="p-4 bg-gray-50 border-2 border-dashed border-gray-300 text-gray-600 font-mono text-xs flex items-center gap-3">
+                    <Lock className="w-5 h-5 text-gray-400 shrink-0" />
                     <div>
-                      <span className="font-bold text-sm block">Teammate Email Verified Successfully!</span>
-                      <span>{formData.teammate.collegeEmail} is authorized.</span>
+                      <span className="font-bold text-black block">Waiting for Leader Verification</span>
+                      <span>
+                        Please verify Team Leader&apos;s email above first. Teammate verification will unlock automatically once Leader is verified.
+                      </span>
                     </div>
                   </div>
-                ) : (
-                  <div className="space-y-5">
-                    {/* Step A: Security Challenge & Send OTP */}
-                    <div className="space-y-3">
-                      <p className="text-xs font-sans text-gray-600 leading-relaxed">
-                        Complete teammate security check below, then click Send OTP to dispatch 6-digit code.
-                      </p>
-
-                      <div className="flex justify-center py-1">
-                        <TurnstileWidget
-                          ref={teammateTurnstileRef}
-                          onVerify={(token) => {
-                            setTeammateToken(token);
-                            setTeammateError('');
-                          }}
-                          onSuccess={(token) => {
-                            setTeammateToken(token);
-                            setTeammateError('');
-                          }}
-                          onError={(err) => setTeammateError(err || 'Security check failed. Please refresh or retry.')}
-                          onExpire={() => setTeammateToken('')}
-                          label="Teammate Security Verification"
-                        />
+                ) : teammateVerified ? (
+                  /* State 3: Teammate Successfully Verified */
+                  <div className="p-4 bg-emerald-50 border-2 border-emerald-500 rounded text-emerald-900 font-mono text-xs flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+                      <div>
+                        <span className="font-bold text-sm block">Teammate Email Verified Successfully!</span>
+                        <span className="text-gray-700">{formData.teammate.collegeEmail} is authorized.</span>
                       </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleTeammateResetToCaptcha}
+                      className="text-[11px] font-mono font-bold text-gray-600 hover:text-black underline uppercase"
+                    >
+                      Re-verify
+                    </button>
+                  </div>
+                ) : !teammateOtpSent ? (
+                  /* State 1: Teammate Security Verification (CAPTCHA ONLY) */
+                  <div className="space-y-4">
+                    <div className="p-3 bg-amber-50 border border-amber-300 text-amber-900 font-mono text-xs">
+                      <span className="font-bold block mb-0.5">STEP 1 OF 2 // TEAMMATE SECURITY CHECK</span>
+                      <span>Complete teammate security check below to enable OTP dispatch.</span>
+                    </div>
 
-                      {teammateToken && (
-                        <div className="p-2 bg-emerald-50 border border-emerald-400 text-emerald-800 font-mono text-xs font-bold flex items-center justify-center gap-1.5">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                          <span>Teammate Security Verification Passed! Ready to send OTP.</span>
-                        </div>
+                    <div className="flex justify-center py-1">
+                      <TurnstileWidget
+                        ref={teammateTurnstileRef}
+                        onVerify={(token) => {
+                          setTeammateToken(token);
+                          setTeammateError('');
+                        }}
+                        onSuccess={(token) => {
+                          setTeammateToken(token);
+                          setTeammateError('');
+                        }}
+                        onError={(err) =>
+                          setTeammateError(err || 'Security check failed. Please refresh or retry.')
+                        }
+                        onExpire={() => setTeammateToken('')}
+                        label="Teammate Security Verification"
+                      />
+                    </div>
+
+                    {teammateToken && (
+                      <div className="p-2.5 bg-emerald-50 border border-emerald-500 text-emerald-800 font-mono text-xs font-bold flex items-center justify-center gap-1.5">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <span>Teammate Security Verification Passed! Ready to send OTP.</span>
+                      </div>
+                    )}
+
+                    {teammateError && (
+                      <div className="p-3 bg-red-50 border-2 border-[#FF2E51] text-[#FF2E51] font-mono text-xs font-bold flex items-center gap-2">
+                        <AlertCircle className="w-4 h-4 shrink-0" />
+                        <span>{teammateError}</span>
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => handleSendTeammateOtp(false)}
+                      disabled={teammateLoading}
+                      className="w-full neo-button bg-[#FF2E51] text-white py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-[#e02445]"
+                    >
+                      {teammateLoading ? (
+                        <>
+                          <RefreshCw className="w-4 h-4 animate-spin" />
+                          <span>DISPATCHING TEAMMATE OTP...</span>
+                        </>
+                      ) : (
+                        <span>SEND TEAMMATE VERIFICATION OTP →</span>
                       )}
-
-                      <button
-                        type="button"
-                        onClick={() => handleSendTeammateOtp(teammateOtpSent)}
-                        disabled={teammateLoading}
-                        className="w-full neo-button bg-[#FF2E51] text-white py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider disabled:opacity-50 flex items-center justify-center gap-2 hover:bg-[#e02445]"
-                      >
-                        {teammateLoading ? (
-                          <>
-                            <RefreshCw className="w-4 h-4 animate-spin" />
-                            <span>SENDING TEAMMATE OTP...</span>
-                          </>
-                        ) : (
-                          <span>{teammateOtpSent ? 'RESEND TEAMMATE OTP' : 'SEND TEAMMATE VERIFICATION OTP'}</span>
-                        )}
-                      </button>
+                    </button>
+                  </div>
+                ) : (
+                  /* State 2: Teammate Enter 6-Digit Email OTP (CAPTCHA is hidden) */
+                  <div className="space-y-4 animate-in fade-in duration-200">
+                    <div className="p-3 bg-sky-50 border border-sky-400 text-sky-900 font-mono text-xs space-y-1">
+                      <div className="flex items-center gap-1.5 font-bold text-sky-950">
+                        <Mail className="w-4 h-4 text-sky-600" />
+                        <span>STEP 2 OF 2 // ENTER TEAMMATE 6-DIGIT OTP</span>
+                      </div>
+                      <p className="text-[11px] text-sky-800 font-sans">
+                        Verification code dispatched to{' '}
+                        <strong className="font-mono text-black">{formData.teammate.collegeEmail}</strong>. Valid
+                        for 10 minutes (please check Spam/Junk folder).
+                      </p>
                     </div>
 
                     {teammateSuccess && (
@@ -1298,51 +1358,58 @@ export const RegistrationPage = ({ onHome }) => {
                       </div>
                     )}
 
-                    {/* Step B: 6-Digit OTP Input Field (ALWAYS VISIBLE) */}
-                    <div className="pt-4 border-t-2 border-black/10 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
-                          ENTER TEAMMATE 6-DIGIT OTP CODE
-                        </label>
-                        {teammateOtpSent && teammateCooldown > 0 && (
-                          <span className="text-[11px] font-mono text-gray-500">
-                            Resend cooldown: {teammateCooldown}s
-                          </span>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={6}
+                        autoFocus
+                        value={teammateOtp}
+                        onChange={(e) => setTeammateOtp(e.target.value.replace(/\D/g, ''))}
+                        placeholder="••••••"
+                        className="bg-white border-2 border-black text-black font-mono text-2xl tracking-[0.3em] px-4 py-2.5 text-center w-full sm:w-48 focus:outline-none focus:border-[#FF2E51] shadow-inner"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleVerifyTeammateOtp}
+                        disabled={teammateLoading || teammateOtp.trim().length !== 6}
+                        className="neo-button bg-black text-white px-7 py-3 text-xs sm:text-sm font-mono font-bold uppercase tracking-wider hover:bg-gray-800 disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        {teammateLoading ? (
+                          <>
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                            <span>VERIFYING CODE...</span>
+                          </>
+                        ) : (
+                          <span>VERIFY TEAMMATE CODE ✓</span>
                         )}
-                      </div>
+                      </button>
+                    </div>
 
-                      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                        <input
-                          type="text"
-                          inputMode="numeric"
-                          maxLength={6}
-                          value={teammateOtp}
-                          onChange={(e) => setTeammateOtp(e.target.value.replace(/\D/g, ''))}
-                          placeholder="••••••"
-                          className="bg-white border-2 border-black text-black font-mono text-xl tracking-[0.3em] px-4 py-2 text-center w-full sm:w-48 focus:outline-none focus:border-[#FF2E51]"
-                        />
+                    {/* Resend and Navigation */}
+                    <div className="pt-2 border-t border-black/10 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
+                      {teammateCooldown > 0 ? (
+                        <span className="text-gray-500">
+                          Resend available in <strong className="text-black">{teammateCooldown}s</strong>
+                        </span>
+                      ) : (
                         <button
                           type="button"
-                          onClick={handleVerifyTeammateOtp}
-                          disabled={teammateLoading || teammateOtp.trim().length !== 6}
-                          className="neo-button bg-black text-white px-6 py-2.5 text-xs font-mono font-bold uppercase tracking-wider hover:bg-gray-800 disabled:opacity-50 flex items-center justify-center gap-2"
+                          onClick={handleTeammateResetToCaptcha}
+                          className="text-[#FF2E51] font-bold hover:underline flex items-center gap-1"
                         >
-                          {teammateLoading ? (
-                            <>
-                              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                              <span>VERIFYING...</span>
-                            </>
-                          ) : (
-                            <span>VERIFY CODE →</span>
-                          )}
+                          <RefreshCw className="w-3.5 h-3.5" />
+                          <span>Resend OTP (Re-verify CAPTCHA)</span>
                         </button>
-                      </div>
+                      )}
 
-                      <p className="text-[11px] font-sans text-gray-500">
-                        {teammateOtpSent
-                          ? 'Enter the 6-digit verification code sent to teammate official email. Valid for 10 minutes (check Spam folder).'
-                          : 'First complete teammate security challenge and click SEND TEAMMATE OTP above, then enter the 6-digit code here.'}
-                      </p>
+                      <button
+                        type="button"
+                        onClick={handleTeammateResetToCaptcha}
+                        className="text-gray-600 hover:text-black hover:underline"
+                      >
+                        ← Back to Step 1
+                      </button>
                     </div>
                   </div>
                 )}
