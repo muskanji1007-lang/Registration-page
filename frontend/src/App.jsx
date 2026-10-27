@@ -12,7 +12,7 @@ export const App = () => {
   const [activePage, setActivePage] = useState('home');
   const [isLookupOpen, setIsLookupOpen] = useState(false);
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('debugx-theme') || 'dark';
+    return localStorage.getItem('debugx-theme') || 'light';
   });
 
   const toggleTheme = () => {
@@ -29,7 +29,7 @@ export const App = () => {
   };
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#F6F3EB] dark:bg-[#0B0F17] text-[#000000] dark:text-[#F0F6FC] flex flex-col justify-between selection:bg-[#FF2E51] selection:text-white transition-colors duration-200">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#F6F3EB] dark:bg-[#000000] text-[#000000] dark:text-[#FFFFFF] flex flex-col justify-between selection:bg-[#FF2E51] selection:text-white transition-colors duration-200">
       {/* Top Navigation */}
       <Navbar
         activePage={activePage}

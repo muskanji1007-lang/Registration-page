@@ -22,7 +22,7 @@ export const FormField = ({
   return (
     <div className="space-y-1.5 w-full">
       <div className="flex items-center justify-between">
-        <label htmlFor={name} className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
+        <label htmlFor={name} className="block text-xs font-mono font-bold tracking-wider text-black dark:text-white uppercase">
           {label} {required && <span className="text-[#FF2E51]">*</span>}
         </label>
         {rightBadge && <div>{rightBadge}</div>}

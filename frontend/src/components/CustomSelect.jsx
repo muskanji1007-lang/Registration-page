@@ -75,7 +75,7 @@ export const CustomSelect = ({
         <label
           htmlFor={name}
           onClick={() => !disabled && setIsOpen(!isOpen)}
-          className="block text-xs font-mono font-bold tracking-wider text-black uppercase cursor-pointer"
+          className="block text-xs font-mono font-bold tracking-wider text-black dark:text-white uppercase cursor-pointer"
         >
           {label} {required && <span className="text-[#FF2E51]">*</span>}
         </label>
@@ -90,17 +90,17 @@ export const CustomSelect = ({
           onClick={() => !disabled && setIsOpen((prev) => !prev)}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
-          className={`w-full bg-white border-2 text-black text-xs sm:text-sm font-mono py-2.5 ${
+          className={`w-full bg-white dark:bg-[#141414] border-2 text-black dark:text-white text-xs sm:text-sm font-mono py-2.5 ${
             Icon ? 'pl-9' : 'pl-3'
           } pr-9 text-left flex items-center justify-between transition-all duration-150 relative select-none ${
             error
               ? 'border-[#FF2E51] bg-red-50/20'
               : isOpen
-              ? 'border-black shadow-neo ring-1 ring-black'
-              : 'border-black hover:border-black focus:border-[#FF2E51]'
+              ? 'border-black dark:border-[#FF2E51] shadow-neo dark:shadow-[3px_3px_0px_#FF2E51] ring-1 ring-black dark:ring-[#FF2E51]'
+              : 'border-black dark:border-[#333333] hover:border-black dark:hover:border-white/50 focus:border-[#FF2E51]'
           } ${
             disabled
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed border-gray-300'
+              ? 'bg-gray-100 dark:bg-[#1A1A1A] text-gray-400 cursor-not-allowed border-gray-300 dark:border-[#2A2A2A]'
               : 'cursor-pointer hover:shadow-neo-sm'
           }`}
         >
@@ -112,7 +112,7 @@ export const CustomSelect = ({
 
           <span
             className={`truncate ${
-              selectedOption ? 'font-bold text-black' : 'text-gray-400 font-normal'
+              selectedOption ? 'font-bold text-black dark:text-white' : 'text-gray-400 font-normal'
             }`}
           >
             {selectedOption ? selectedOption.label : placeholder}
@@ -120,8 +120,8 @@ export const CustomSelect = ({
 
           <span className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
             <ChevronDown
-              className={`w-4 h-4 text-black transition-transform duration-200 ${
-                isOpen ? 'transform rotate-180 text-[#FF2E51]' : ''
+              className={`w-4 h-4 text-black dark:text-white transition-transform duration-200 ${
+                isOpen ? 'transform rotate-180 text-[#FF2E51] dark:text-[#FF2E51]' : ''
               }`}
             />
           </span>
@@ -131,7 +131,7 @@ export const CustomSelect = ({
         {isOpen && (
           <div
             role="listbox"
-            className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white border-2 border-black shadow-[4px_4px_0px_#000000] max-h-60 overflow-y-auto animate-in fade-in-50 zoom-in-95 duration-100"
+            className="absolute left-0 right-0 top-full mt-1.5 z-50 bg-white dark:bg-[#141414] border-2 border-black dark:border-[#FF2E51] shadow-[4px_4px_0px_#000000] dark:shadow-[4px_4px_0px_#FF2E51] max-h-60 overflow-y-auto animate-in fade-in-50 zoom-in-95 duration-100"
           >
             {normalizedOptions.length === 0 ? (
               <div className="px-3 py-2 text-xs font-mono text-gray-400">No options available</div>
@@ -145,10 +145,10 @@ export const CustomSelect = ({
                     role="option"
                     aria-selected={isSelected}
                     onClick={() => handleSelect(opt.value)}
-                    className={`px-3 py-2.5 text-xs sm:text-sm font-mono cursor-pointer flex items-center justify-between transition-colors border-b border-gray-100 last:border-b-0 ${
+                    className={`px-3 py-2.5 text-xs sm:text-sm font-mono cursor-pointer flex items-center justify-between transition-colors border-b border-gray-100 dark:border-[#242424] last:border-b-0 ${
                       isSelected
-                        ? 'bg-black text-white font-bold'
-                        : 'text-black hover:bg-[#FF2E51] hover:text-white'
+                        ? 'bg-black dark:bg-[#222222] text-white font-bold'
+                        : 'text-black dark:text-white hover:bg-[#FF2E51] hover:text-white'
                     }`}
                   >
                     <span className="truncate">{opt.label}</span>

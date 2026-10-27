@@ -112,15 +112,15 @@ const TurnstileWidget = forwardRef(({ onVerify, onSuccess, onExpire, onError, la
   }, [activeSiteKey]);
 
   return (
-    <div className="my-3 p-4 bg-white border-2 border-black shadow-neo-sm rounded-sm">
+    <div className="my-3 p-4 bg-white dark:bg-[#121212] border-2 border-black dark:border-[#2E2E2E] shadow-neo-sm dark:shadow-[3px_3px_0px_#FF2E51] rounded-sm">
       {/* Header with Title & Status */}
-      <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-200">
-        <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-black">
+      <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-200 dark:border-[#222222]">
+        <div className="flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-black dark:text-white">
           <ShieldCheck className="w-4 h-4 text-[#FF2E51]" />
           <span>{label}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] font-mono px-2 py-0.5 bg-gray-100 border border-black/40 rounded text-gray-700">
+          <span className="text-[10px] font-mono px-2 py-0.5 bg-gray-100 dark:bg-[#222222] border border-black/40 dark:border-[#333333] rounded text-gray-700 dark:text-gray-300">
             Cloudflare Turnstile
           </span>
           {isVerified ? (

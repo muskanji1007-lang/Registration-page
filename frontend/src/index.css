@@ -113,7 +113,7 @@
 }
 
 /* ==========================================================================
-   DARK THEME ARCHITECTURE (DeBugX Hacker / Cyber Terminal Neobrutalism)
+   DARK THEME ARCHITECTURE (True Pitch Black & Colored Shadows Neobrutalism)
    ========================================================================== */
 
 .dark {
@@ -121,185 +121,226 @@
 }
 
 .dark body {
-  background-color: #0A0E17 !important;
-  color: #F8FAFC !important;
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
 }
 
-/* Background Overrides */
+/* Background Overrides - Deep Pitch Black / Neutral Greys */
 .dark .bg-\[\#F6F3EB\] {
-  background-color: #0A0E17 !important;
+  background-color: #000000 !important;
 }
 
 .dark .bg-\[\#FCFAF6\] {
-  background-color: #111726 !important;
+  background-color: #0D0D0D !important;
 }
 
 .dark .bg-white {
-  background-color: #151D2E !important;
+  background-color: #121212 !important;
+}
+
+.dark .bg-white\/70,
+.dark .bg-white\/60,
+.dark .bg-white\/50,
+.dark .bg-white\/80 {
+  background-color: #141414 !important;
+  color: #E5E5E5 !important;
 }
 
 .dark .bg-gray-50,
 .dark .bg-gray-100 {
-  background-color: #0F172A !important;
-  color: #CBD5E1 !important;
+  background-color: #141414 !important;
+  color: #E5E5E5 !important;
 }
 
 .dark .bg-\[\#F4EFE6\],
 .dark .bg-\[\#F5F2EB\],
-.dark .bg-\[\#EFECE3\]\/70 {
-  background-color: #0D1321 !important;
-  color: #E2E8F0 !important;
+.dark .bg-\[\#EFECE3\]\/70,
+.dark .bg-\[\#FCFAF6\]\/60 {
+  background-color: #141414 !important;
+  color: #E5E5E5 !important;
 }
 
 /* Text Overrides */
 .dark .text-black {
-  color: #F8FAFC !important;
+  color: #FFFFFF !important;
 }
 
+.dark .text-gray-900,
 .dark .text-gray-800,
 .dark .text-gray-700 {
-  color: #E2E8F0 !important;
+  color: #E5E5E5 !important;
 }
 
 .dark .text-gray-600 {
-  color: #94A3B8 !important;
+  color: #A3A3A3 !important;
 }
 
 .dark .text-gray-500 {
-  color: #64748B !important;
+  color: #888888 !important;
 }
 
-/* Borders */
+.dark .text-gray-400 {
+  color: #737373 !important;
+}
+
+/* Borders - Clean High-Contrast Charcoal */
 .dark .border-black {
-  border-color: #243046 !important;
+  border-color: #2E2E2E !important;
 }
 
 .dark .border-black\/10,
 .dark .border-black\/20,
 .dark .border-black\/30,
 .dark .border-black\/40 {
-  border-color: #1E293B !important;
+  border-color: #262626 !important;
 }
 
 .dark .border-gray-100,
 .dark .border-gray-200,
 .dark .border-gray-300 {
-  border-color: #243046 !important;
+  border-color: #2A2A2A !important;
 }
 
-/* Neo-Brutalist Containers in Dark Theme */
-.dark .neo-box,
-.dark .neo-box-lg,
-.dark .neo-box-xl {
-  background-color: #111726 !important;
-  border-color: #243046 !important;
-  box-shadow: 4px 4px 0px #000000 !important;
-  color: #F8FAFC !important;
+/* Neo-Brutalist Containers in Dark Theme (With Vibrant Colored Red Shadow) */
+.dark .neo-box {
+  background-color: #0D0D0D !important;
+  border-color: #2E2E2E !important;
+  box-shadow: 4px 4px 0px #FF2E51 !important;
+  color: #FFFFFF !important;
+}
+
+.dark .neo-box-lg {
+  background-color: #0D0D0D !important;
+  border-color: #2E2E2E !important;
+  box-shadow: 6px 6px 0px #FF2E51 !important;
+  color: #FFFFFF !important;
 }
 
 .dark .neo-box-xl {
-  box-shadow: 6px 6px 0px #000000 !important;
+  background-color: #0D0D0D !important;
+  border-color: #2E2E2E !important;
+  box-shadow: 8px 8px 0px #FF2E51 !important;
+  color: #FFFFFF !important;
 }
 
 .dark .neo-card-interactive {
-  background-color: #111726 !important;
-  border-color: #243046 !important;
-  box-shadow: 4px 4px 0px #000000 !important;
-  color: #F8FAFC !important;
+  background-color: #121212 !important;
+  border-color: #2E2E2E !important;
+  box-shadow: 4px 4px 0px #FF2E51 !important;
+  color: #FFFFFF !important;
 }
 
 .dark .neo-card-interactive:hover {
   transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0px #000000 !important;
+  box-shadow: 2px 2px 0px #FF2E51 !important;
   border-color: #FF2E51 !important;
 }
 
-/* Neo-Buttons in Dark Theme */
+/* Neo-Buttons in Dark Theme (Colored Accent Shadows) */
 .dark .neo-button.bg-white {
-  background-color: #162032 !important;
-  color: #F8FAFC !important;
-  border-color: #334155 !important;
-  box-shadow: 3px 3px 0px #000000 !important;
+  background-color: #181818 !important;
+  color: #FFFFFF !important;
+  border-color: #383838 !important;
+  box-shadow: 3px 3px 0px #FF2E51 !important;
 }
 
 .dark .neo-button.bg-white:hover:not(:disabled) {
-  background-color: #1E293B !important;
-  box-shadow: 1px 1px 0px #000000 !important;
+  background-color: #222222 !important;
+  box-shadow: 1px 1px 0px #FF2E51 !important;
 }
 
 .dark .neo-button.bg-black {
-  background-color: #0F172A !important;
+  background-color: #181818 !important;
   color: #FFFFFF !important;
-  border-color: #334155 !important;
+  border-color: #383838 !important;
+  box-shadow: 3px 3px 0px #FF2E51 !important;
 }
 
 .dark .neo-button.bg-black:hover:not(:disabled) {
-  background-color: #1E293B !important;
+  background-color: #242424 !important;
+  box-shadow: 1px 1px 0px #FF2E51 !important;
+}
+
+.dark .neo-button.bg-\[\#FF2E51\] {
+  background-color: #FF2E51 !important;
+  color: #FFFFFF !important;
+  border-color: #FFFFFF !important;
+  box-shadow: 3px 3px 0px #FBBF24 !important;
+}
+
+.dark .neo-button.bg-\[\#FF2E51\]:hover:not(:disabled) {
+  box-shadow: 1px 1px 0px #FBBF24 !important;
 }
 
 /* Form Inputs & Elements in Dark Theme */
 .dark input:not([type="checkbox"]):not([type="radio"]),
 .dark textarea,
 .dark select {
-  background-color: #0B111E !important;
+  background-color: #141414 !important;
   color: #FFFFFF !important;
-  border-color: #334155 !important;
+  border-color: #333333 !important;
 }
 
 .dark input:focus,
 .dark textarea:focus,
 .dark select:focus {
   border-color: #FF2E51 !important;
+  box-shadow: 0 0 0 1px #FF2E51 !important;
 }
 
 .dark input::placeholder {
-  color: #64748B !important;
+  color: #666666 !important;
 }
 
 .dark input[readonly] {
-  background-color: #0F172A !important;
-  color: #94A3B8 !important;
+  background-color: #181818 !important;
+  color: #A3A3A3 !important;
 }
 
 /* Custom Dropdown in Dark Theme */
 .dark [role="listbox"] {
-  background-color: #151D2E !important;
-  border-color: #334155 !important;
-  box-shadow: 4px 4px 0px #000000 !important;
+  background-color: #141414 !important;
+  border-color: #333333 !important;
+  box-shadow: 4px 4px 0px #FF2E51 !important;
+}
+
+.dark [role="option"] {
+  border-color: #222222 !important;
+  color: #E5E5E5 !important;
 }
 
 .dark [role="option"][aria-selected="true"] {
-  background-color: #0B111E !important;
+  background-color: #262626 !important;
   color: #FBBF24 !important;
 }
 
 /* Status Banners in Dark Mode */
 .dark .bg-emerald-50 {
-  background-color: rgba(6, 78, 59, 0.35) !important;
-  color: #6EE7B7 !important;
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  color: #34D399 !important;
   border-color: #059669 !important;
 }
 
 .dark .bg-red-50 {
-  background-color: rgba(127, 29, 29, 0.35) !important;
-  color: #FCA5A5 !important;
+  background-color: rgba(239, 68, 68, 0.15) !important;
+  color: #F87171 !important;
   border-color: #DC2626 !important;
 }
 
 /* Halftone Patterns in Dark Theme */
 .dark .halftone-dots {
-  background-image: radial-gradient(#243046 1.5px, transparent 1.5px) !important;
+  background-image: radial-gradient(#262626 1.5px, transparent 1.5px) !important;
 }
 
 /* Scrollbar in Dark Theme */
 .dark ::-webkit-scrollbar-track {
-  background: #0A0E17 !important;
-  border-left: 1px solid #1E293B !important;
+  background: #000000 !important;
+  border-left: 1px solid #222222 !important;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-  background: #243046 !important;
-  border: 1px solid #1E293B !important;
+  background: #262626 !important;
+  border: 1px solid #1A1A1A !important;
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {

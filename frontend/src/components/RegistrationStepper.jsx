@@ -7,7 +7,7 @@ export const RegistrationStepper = ({ currentStep = 1 }) => {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-2 border-2 border-black p-1.5 bg-[#F6F3EB] shadow-neo-sm">
+    <div className="grid grid-cols-2 gap-2 border-2 border-black dark:border-[#2E2E2E] p-1.5 bg-[#F6F3EB] dark:bg-[#000000] shadow-neo-sm">
       {steps.map((st) => {
         const isActive = st.num === currentStep;
         const isDone = st.num < currentStep;
@@ -17,10 +17,10 @@ export const RegistrationStepper = ({ currentStep = 1 }) => {
             key={st.num}
             className={`p-2.5 border-2 transition-all flex items-center gap-2.5 ${
               isActive
-                ? 'border-black bg-[#FCFAF6] shadow-neo-sm ring-1 ring-black'
+                ? 'border-black dark:border-[#FF2E51] bg-[#FCFAF6] dark:bg-[#1A1A1A] shadow-neo-sm ring-1 ring-black dark:ring-[#FF2E51]'
                 : isDone
-                ? 'border-black bg-black text-white shadow-neo-sm'
-                : 'border-black/30 bg-[#FCFAF6]/60 text-gray-500'
+                ? 'border-black dark:border-emerald-500 bg-black dark:bg-[#111111] text-white shadow-neo-sm'
+                : 'border-black/30 dark:border-[#2A2A2A] bg-[#FCFAF6]/60 dark:bg-[#141414] text-gray-500 dark:text-gray-400'
             }`}
           >
             <div
@@ -29,7 +29,7 @@ export const RegistrationStepper = ({ currentStep = 1 }) => {
                   ? 'bg-[#FF2E51] text-white'
                   : isDone
                   ? 'bg-emerald-500 text-white'
-                  : 'bg-gray-200 text-black'
+                  : 'bg-gray-200 dark:bg-[#262626] text-black dark:text-gray-400'
               }`}
             >
               {isDone ? '✓' : st.num}
@@ -37,7 +37,11 @@ export const RegistrationStepper = ({ currentStep = 1 }) => {
             <div className="leading-tight overflow-hidden">
               <div
                 className={`text-[11px] font-mono font-bold tracking-tight uppercase truncate ${
-                  isActive ? 'text-black' : isDone ? 'text-white' : 'text-gray-700'
+                  isActive
+                    ? 'text-black dark:text-white'
+                    : isDone
+                    ? 'text-white dark:text-gray-200'
+                    : 'text-gray-700 dark:text-gray-400'
                 }`}
               >
                 {st.title}
@@ -47,8 +51,8 @@ export const RegistrationStepper = ({ currentStep = 1 }) => {
                   isActive
                     ? 'text-[#FF2E51] font-semibold'
                     : isDone
-                    ? 'text-gray-300'
-                    : 'text-gray-400'
+                    ? 'text-gray-300 dark:text-gray-400'
+                    : 'text-gray-400 dark:text-gray-500'
                 }`}
               >
                 {isActive ? 'Active Step' : isDone ? 'Completed' : 'Pending'}

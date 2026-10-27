@@ -92,6 +92,17 @@ export const OtpVerificationStep = ({
     }
   };
 
+  const formatOtpErrorMessage = (rawMsg) => {
+    if (!rawMsg) return 'Incorrect OTP. Please enter the valid 6-digit code sent to your email.';
+    let msg = String(rawMsg);
+    msg = msg.replace(/Invalid or expired OTP\.?/gi, 'Incorrect OTP.');
+    msg = msg.replace(/\bInvalid OTP\b/gi, 'Incorrect OTP');
+    if (/attempt\(s\) remaining/i.test(msg) && !/incorrect otp/i.test(msg)) {
+      msg = 'Incorrect OTP. ' + msg;
+    }
+    return msg;
+  };
+
   // Verify Leader OTP
   const handleVerifyLeaderOtp = async () => {
     const cleanOtp = leaderOtp.trim();
@@ -116,7 +127,7 @@ export const OtpVerificationStep = ({
         setTimeout(() => setActiveTab('teammate'), 900);
       }
     } catch (err) {
-      setLeaderError(err.message || 'Invalid or expired OTP code.');
+      setLeaderError(formatOtpErrorMessage(err.message || 'Incorrect OTP code.'));
     } finally {
       setLeaderLoading(false);
     }
@@ -177,7 +188,7 @@ export const OtpVerificationStep = ({
       setTeammateVerified(true);
       setTeammateSuccess(res.message || 'Teammate email verified successfully!');
     } catch (err) {
-      setTeammateError(err.message || 'Invalid or expired OTP code.');
+      setTeammateError(formatOtpErrorMessage(err.message || 'Incorrect OTP code.'));
     } finally {
       setTeammateLoading(false);
     }

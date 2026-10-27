@@ -40,10 +40,10 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick, theme = 'dark'
   ];
 
   return (
-    <header className="w-full bg-[#F6F3EB] border-b-2 border-black/10 sticky top-0 z-40">
+    <header className="w-full bg-[#F6F3EB] dark:bg-[#000000] border-b-2 border-black/10 dark:border-[#262626] sticky top-0 z-40 transition-colors duration-200">
       {/* Top Banner Notice */}
       <div className="max-w-6xl mx-auto px-4 pt-3 pb-1">
-        <div className="flex items-center justify-between py-2 border-b-2 border-black">
+        <div className="flex items-center justify-between py-2 border-b-2 border-black dark:border-[#2E2E2E]">
           {/* Logo Brand */}
           <button
             onClick={() => setActivePage('home')}
@@ -63,8 +63,8 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick, theme = 'dark'
                   onClick={() => setActivePage(item.id)}
                   className={`text-xs font-mono font-bold tracking-wider transition-all ${
                     isActive
-                      ? 'bg-black text-white px-3 py-1 border border-black shadow-neo-sm'
-                      : 'text-gray-700 hover:text-black py-1 px-2 hover:bg-black/5'
+                      ? 'bg-black text-white dark:bg-[#FF2E51] dark:text-white px-3 py-1 border border-black dark:border-[#FF2E51] shadow-neo-sm'
+                      : 'text-gray-700 dark:text-gray-300 hover:text-black dark:hover:text-white py-1 px-2 hover:bg-black/5 dark:hover:bg-white/5'
                   }`}
                 >
                   {item.label}
@@ -76,7 +76,7 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick, theme = 'dark'
           {/* Right CTA and Icons */}
           <div className="flex items-center gap-1.5 sm:gap-3">
             {/* Backend Health Badge */}
-            <div className="hidden lg:flex items-center gap-1.5 px-2 py-1 text-[11px] font-mono border border-black/30 bg-white">
+            <div className="hidden lg:flex items-center gap-1.5 px-2 py-1 text-[11px] font-mono border border-black/30 dark:border-[#333333] bg-white dark:bg-[#141414]">
               <span
                 className={`w-2 h-2 rounded-full ${
                   backendStatus === 'online'
@@ -86,7 +86,7 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick, theme = 'dark'
                     : 'bg-[#FF2E51]'
                 }`}
               />
-              <span className="text-[10px] text-gray-700 font-semibold uppercase">
+              <span className="text-[10px] text-gray-700 dark:text-gray-300 font-semibold uppercase">
                 {backendStatus === 'online'
                   ? 'API ONLINE'
                   : backendStatus === 'checking'
@@ -119,7 +119,7 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick, theme = 'dark'
               onClick={toggleTheme}
               title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
               aria-label="Toggle theme"
-              className="p-1.5 border-2 border-black bg-white hover:bg-gray-100 shadow-neo-sm transition-all flex items-center justify-center cursor-pointer"
+              className="p-1.5 border-2 border-black dark:border-[#333333] bg-white dark:bg-[#181818] hover:bg-gray-100 dark:hover:bg-[#242424] shadow-neo-sm dark:shadow-[2px_2px_0px_#FF2E51] transition-all flex items-center justify-center cursor-pointer"
             >
               {theme === 'dark' ? (
                 <Sun className="w-4 h-4 text-[#FBBF24]" />
@@ -132,9 +132,9 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick, theme = 'dark'
             <button
               onClick={onAdminClick}
               title="Receipt / Ticket Lookup"
-              className="p-1.5 border-2 border-black bg-white hover:bg-gray-100 shadow-neo-sm transition-all cursor-pointer"
+              className="p-1.5 border-2 border-black dark:border-[#333333] bg-white dark:bg-[#181818] hover:bg-gray-100 dark:hover:bg-[#242424] shadow-neo-sm dark:shadow-[2px_2px_0px_#FF2E51] transition-all cursor-pointer"
             >
-              <User className="w-4 h-4 text-black" />
+              <User className="w-4 h-4 text-black dark:text-white" />
             </button>
 
             {/* Mobile Hamburger Toggle */}
@@ -156,7 +156,7 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick, theme = 'dark'
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-b-2 border-black px-4 py-3 shadow-lg">
+        <div className="md:hidden bg-white dark:bg-[#121212] border-b-2 border-black dark:border-[#2E2E2E] px-4 py-3 shadow-lg">
           <div className="flex flex-col gap-2">
             {navItems.map((item) => (
               <button
@@ -166,7 +166,9 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick, theme = 'dark'
                   setMobileMenuOpen(false);
                 }}
                 className={`text-left py-2 px-3 text-xs font-mono font-bold tracking-wider ${
-                  activePage === item.id ? 'bg-black text-white' : 'hover:bg-gray-100 text-gray-800'
+                  activePage === item.id
+                    ? 'bg-black text-white dark:bg-[#FF2E51]'
+                    : 'hover:bg-gray-100 dark:hover:bg-[#1C1C1C] text-gray-800 dark:text-gray-200'
                 }`}
               >
                 {item.label}
@@ -174,11 +176,11 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick, theme = 'dark'
             ))}
 
             {/* Theme Toggle row in mobile menu */}
-            <div className="pt-2 border-t border-gray-200 flex items-center justify-between">
-              <span className="text-xs font-mono font-bold uppercase text-gray-600">Theme</span>
+            <div className="pt-2 border-t border-gray-200 dark:border-[#222222] flex items-center justify-between">
+              <span className="text-xs font-mono font-bold uppercase text-gray-600 dark:text-gray-400">Theme</span>
               <button
                 onClick={toggleTheme}
-                className="neo-button bg-white text-black px-3 py-1 text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer"
+                className="neo-button bg-white dark:bg-[#1C1C1C] text-black dark:text-white px-3 py-1 text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer dark:border-[#333333]"
               >
                 {theme === 'dark' ? (
                   <>
@@ -194,7 +196,7 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick, theme = 'dark'
               </button>
             </div>
 
-            <div className="pt-2 border-t border-gray-200">
+            <div className="pt-2 border-t border-gray-200 dark:border-[#222222]">
               <button
                 onClick={() => {
                   setActivePage('register');

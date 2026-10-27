@@ -1,19 +1,19 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐛</text></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DeBugX 2026 // Bug Hunting Challenge — Cloud Computing Cell AKGEC</title>
 
-    <!-- Theme initialization (Default Dark Theme) -->
+    <!-- Theme initialization (Default Light Theme) -->
     <script>
       (function() {
         const saved = localStorage.getItem('debugx-theme');
-        if (saved === 'light') {
-          document.documentElement.classList.remove('dark');
-        } else {
+        if (saved === 'dark') {
           document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
         }
       })();
     </script>

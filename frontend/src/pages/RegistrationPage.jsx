@@ -318,6 +318,18 @@ export const RegistrationPage = ({ onHome }) => {
     }
   };
 
+  const formatOtpErrorMessage = (rawMsg) => {
+    if (!rawMsg) return 'Incorrect OTP. Please enter the valid 6-digit code sent to your email.';
+    let msg = String(rawMsg);
+    // Replace "Invalid or expired OTP" with "Incorrect OTP"
+    msg = msg.replace(/Invalid or expired OTP\.?/gi, 'Incorrect OTP.');
+    msg = msg.replace(/\bInvalid OTP\b/gi, 'Incorrect OTP');
+    if (/attempt\(s\) remaining/i.test(msg) && !/incorrect otp/i.test(msg)) {
+      msg = 'Incorrect OTP. ' + msg;
+    }
+    return msg;
+  };
+
   // Verify Leader OTP
   const handleVerifyLeaderOtp = async () => {
     if (leaderLoading) return;
@@ -344,7 +356,11 @@ export const RegistrationPage = ({ onHome }) => {
         leader: { ...prev.leader, isVerified: true },
       }));
     } catch (err) {
-      setLeaderError(err.message || 'Invalid or expired OTP code. Please enter the latest code or request a new one.');
+      setLeaderError(
+        formatOtpErrorMessage(
+          err.message || 'Incorrect OTP code. Please enter the latest code or request a new one.'
+        )
+      );
     } finally {
       setLeaderLoading(false);
     }
@@ -425,7 +441,11 @@ export const RegistrationPage = ({ onHome }) => {
         teammate: { ...prev.teammate, isVerified: true },
       }));
     } catch (err) {
-      setTeammateError(err.message || 'Invalid or expired OTP code.');
+      setTeammateError(
+        formatOtpErrorMessage(
+          err.message || 'Incorrect OTP code. Please enter the valid 6-digit code.'
+        )
+      );
     } finally {
       setTeammateLoading(false);
     }
@@ -775,7 +795,7 @@ export const RegistrationPage = ({ onHome }) => {
 
             {/* Residence Type */}
             <div className="space-y-2">
-              <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
+              <label className="block text-xs font-mono font-bold tracking-wider text-black dark:text-white uppercase">
                 RESIDENCE TYPE <span className="text-[#FF2E51]">*</span>
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -786,8 +806,8 @@ export const RegistrationPage = ({ onHome }) => {
                       key={res.value}
                       className={`flex items-start gap-3 p-3.5 border-2 cursor-pointer transition-all ${
                         isChecked
-                          ? 'border-black bg-white shadow-neo-sm ring-1 ring-black'
-                          : 'border-black/30 bg-white/70 hover:border-black'
+                          ? 'border-black dark:border-[#FF2E51] bg-white dark:bg-[#1A1A1A] shadow-neo-sm ring-1 ring-black dark:ring-[#FF2E51] dark:shadow-[3px_3px_0px_#FF2E51]'
+                          : 'border-black/30 dark:border-[#2E2E2E] bg-white/70 dark:bg-[#141414] hover:border-black dark:hover:border-white/40'
                       }`}
                     >
                       <input
@@ -796,13 +816,13 @@ export const RegistrationPage = ({ onHome }) => {
                         value={res.value}
                         checked={isChecked}
                         onChange={(e) => handleLeaderChange('residence', e.target.value)}
-                        className="mt-0.5 text-[#FF2E51] focus:ring-[#FF2E51]"
+                        className="mt-0.5 text-[#FF2E51] focus:ring-[#FF2E51] accent-[#FF2E51]"
                       />
                       <div>
-                        <div className="font-mono font-bold text-xs uppercase text-black">
+                        <div className="font-mono font-bold text-xs uppercase text-black dark:text-white">
                           {res.label}
                         </div>
-                        <div className="text-[11px] font-sans text-gray-500">
+                        <div className="text-[11px] font-sans text-gray-500 dark:text-gray-400">
                           {res.description}
                         </div>
                       </div>
@@ -835,8 +855,8 @@ export const RegistrationPage = ({ onHome }) => {
                 onClick={() => setFormData((prev) => ({ ...prev, registrationType: 'solo' }))}
                 className={`p-4 border-2 text-left transition-all duration-150 cursor-pointer hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-[3px] active:translate-y-[3px] relative ${
                   formData.registrationType === 'solo'
-                    ? 'border-[#FF2E51] bg-white ring-1 ring-[#FF2E51] shadow-[4px_4px_0px_0px_#FF2E51]'
-                    : 'border-black/30 bg-white hover:border-black'
+                    ? 'border-[#FF2E51] bg-white dark:bg-[#1A1A1A] ring-1 ring-[#FF2E51] shadow-[4px_4px_0px_0px_#FF2E51]'
+                    : 'border-black/30 dark:border-[#2E2E2E] bg-white dark:bg-[#141414] hover:border-black dark:hover:border-white/40'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
@@ -847,10 +867,10 @@ export const RegistrationPage = ({ onHome }) => {
                     1 MEMBER
                   </span>
                 </div>
-                <div className="font-display font-extrabold text-sm uppercase text-black">
+                <div className="font-display font-extrabold text-sm uppercase text-black dark:text-white">
                   SOLO HUNTER
                 </div>
-                <div className="text-[11px] font-sans mt-0.5 text-gray-600">
+                <div className="text-[11px] font-sans mt-0.5 text-gray-600 dark:text-gray-400">
                   Single participant code debugging challenge.
                 </div>
               </button>
@@ -861,8 +881,8 @@ export const RegistrationPage = ({ onHome }) => {
                 onClick={() => setFormData((prev) => ({ ...prev, registrationType: 'team' }))}
                 className={`p-4 border-2 text-left transition-all duration-150 cursor-pointer hover:translate-x-[2px] hover:translate-y-[2px] active:translate-x-[3px] active:translate-y-[3px] relative ${
                   formData.registrationType === 'team'
-                    ? 'bg-black text-white border-black shadow-neo'
-                    : 'border-black/30 bg-white hover:border-black text-black'
+                    ? 'bg-black dark:bg-[#1A1A1A] text-white border-black dark:border-[#FF2E51] shadow-neo dark:shadow-[4px_4px_0px_0px_#FF2E51]'
+                    : 'border-black/30 dark:border-[#2E2E2E] bg-white dark:bg-[#141414] hover:border-black dark:hover:border-white/40 text-black dark:text-white'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
@@ -873,18 +893,18 @@ export const RegistrationPage = ({ onHome }) => {
                     className={`text-[10px] font-mono font-bold px-2 py-0.5 border ${
                       formData.registrationType === 'team'
                         ? 'bg-[#FBBF24] text-black border-black'
-                        : 'bg-gray-100 text-gray-700 border-black/30'
+                        : 'bg-gray-100 dark:bg-[#222222] text-gray-700 dark:text-gray-300 border-black/30 dark:border-[#333333]'
                     }`}
                   >
                     2 MEMBERS
                   </span>
                 </div>
-                <div className="font-display font-extrabold text-sm uppercase">
+                <div className="font-display font-extrabold text-sm uppercase text-black dark:text-white">
                   DUO SQUAD
                 </div>
                 <div
                   className={`text-[11px] font-sans mt-0.5 ${
-                    formData.registrationType === 'team' ? 'text-gray-300' : 'text-gray-600'
+                    formData.registrationType === 'team' ? 'text-gray-300 dark:text-gray-300' : 'text-gray-600 dark:text-gray-400'
                   }`}
                 >
                   2-member collaborative strike team.
@@ -1012,7 +1032,7 @@ export const RegistrationPage = ({ onHome }) => {
 
               {/* Residence */}
               <div className="space-y-2">
-                <label className="block text-xs font-mono font-bold tracking-wider text-black uppercase">
+                <label className="block text-xs font-mono font-bold tracking-wider text-black dark:text-white uppercase">
                   RESIDENCE TYPE <span className="text-[#FF2E51]">*</span>
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1023,8 +1043,8 @@ export const RegistrationPage = ({ onHome }) => {
                         key={res.value}
                         className={`flex items-start gap-3 p-3.5 border-2 cursor-pointer transition-all ${
                           isChecked
-                            ? 'border-black bg-white shadow-neo-sm ring-1 ring-black'
-                            : 'border-black/30 bg-white/70 hover:border-black'
+                            ? 'border-black dark:border-[#FF2E51] bg-white dark:bg-[#1A1A1A] shadow-neo-sm ring-1 ring-black dark:ring-[#FF2E51] dark:shadow-[3px_3px_0px_#FF2E51]'
+                            : 'border-black/30 dark:border-[#2E2E2E] bg-white/70 dark:bg-[#141414] hover:border-black dark:hover:border-white/40'
                         }`}
                       >
                         <input
@@ -1033,13 +1053,13 @@ export const RegistrationPage = ({ onHome }) => {
                           value={res.value}
                           checked={isChecked}
                           onChange={(e) => handleTeammateChange('residence', e.target.value)}
-                          className="mt-0.5 text-[#FF2E51] focus:ring-[#FF2E51]"
+                          className="mt-0.5 text-[#FF2E51] focus:ring-[#FF2E51] accent-[#FF2E51]"
                         />
                         <div>
-                          <div className="font-mono font-bold text-xs uppercase text-black">
+                          <div className="font-mono font-bold text-xs uppercase text-black dark:text-white">
                             {res.label}
                           </div>
-                          <div className="text-[11px] font-sans text-gray-500">
+                          <div className="text-[11px] font-sans text-gray-500 dark:text-gray-400">
                             {res.description}
                           </div>
                         </div>
@@ -1096,16 +1116,20 @@ export const RegistrationPage = ({ onHome }) => {
 
               {leaderVerified ? (
                 /* State 3: Successfully Verified */
-                <div className="p-3 bg-emerald-50 border-2 border-emerald-500 font-mono text-xs flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span className="font-bold text-emerald-950">{formData.leader.collegeEmail}</span>
-                    <span className="text-emerald-700 font-semibold">(Verified)</span>
+                <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-500 font-mono text-xs flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5">
+                  <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                    <span className="font-bold text-emerald-950 dark:text-emerald-200 truncate break-all">
+                      {formData.leader.collegeEmail}
+                    </span>
+                    <span className="text-emerald-700 dark:text-emerald-300 font-semibold shrink-0">
+                      (Verified)
+                    </span>
                   </div>
                   <button
                     type="button"
                     onClick={handleLeaderResetToCaptcha}
-                    className="text-[11px] font-mono text-gray-500 hover:text-black underline"
+                    className="text-[11px] font-mono font-bold text-gray-600 dark:text-gray-300 hover:text-[#FF2E51] dark:hover:text-[#FF2E51] underline shrink-0 ml-auto"
                   >
                     Change
                   </button>
@@ -1264,16 +1288,20 @@ export const RegistrationPage = ({ onHome }) => {
                   </div>
                 ) : teammateVerified ? (
                   /* State 3: Teammate Successfully Verified */
-                  <div className="p-3 bg-emerald-50 border-2 border-emerald-500 font-mono text-xs flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                      <span className="font-bold text-emerald-950">{formData.teammate.collegeEmail}</span>
-                      <span className="text-emerald-700 font-semibold">(Verified)</span>
+                  <div className="p-3 bg-emerald-50 dark:bg-emerald-950/40 border-2 border-emerald-500 font-mono text-xs flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                      <span className="font-bold text-emerald-950 dark:text-emerald-200 truncate break-all">
+                        {formData.teammate.collegeEmail}
+                      </span>
+                      <span className="text-emerald-700 dark:text-emerald-300 font-semibold shrink-0">
+                        (Verified)
+                      </span>
                     </div>
                     <button
                       type="button"
                       onClick={handleTeammateResetToCaptcha}
-                      className="text-[11px] font-mono text-gray-500 hover:text-black underline"
+                      className="text-[11px] font-mono font-bold text-gray-600 dark:text-gray-300 hover:text-[#FF2E51] dark:hover:text-[#FF2E51] underline shrink-0 ml-auto"
                     >
                       Change
                     </button>
