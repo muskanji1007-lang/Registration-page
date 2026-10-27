@@ -70,6 +70,12 @@ export const FormField = ({
             disabled={disabled}
             readOnly={readOnly}
             maxLength={maxLength}
+            onInput={(e) => {
+              if (maxLength && e.target.value && e.target.value.length > maxLength) {
+                e.target.value = e.target.value.slice(0, maxLength);
+              }
+              if (rest.onInput) rest.onInput(e);
+            }}
             {...rest}
             className={`w-full bg-white border-2 text-black text-xs sm:text-sm font-mono py-2.5 ${
               Icon ? 'pl-9' : 'pl-3'

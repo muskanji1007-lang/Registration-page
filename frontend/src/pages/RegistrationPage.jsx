@@ -240,6 +240,34 @@ export const RegistrationPage = ({ onHome }) => {
     }
   };
 
+  const handlePhoneKeyDown = (e) => {
+    if (['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter'].includes(e.key)) {
+      return;
+    }
+    if (e.ctrlKey || e.metaKey) return;
+    if (!/^\d$/.test(e.key)) {
+      e.preventDefault();
+      return;
+    }
+    if (e.target.value.length >= 10 && !window.getSelection()?.toString()) {
+      e.preventDefault();
+    }
+  };
+
+  const handleStudentNumberKeyDown = (e) => {
+    if (['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Enter'].includes(e.key)) {
+      return;
+    }
+    if (e.ctrlKey || e.metaKey) return;
+    if (!/^\d$/.test(e.key)) {
+      e.preventDefault();
+      return;
+    }
+    if (e.target.value.length >= 8 && !window.getSelection()?.toString()) {
+      e.preventDefault();
+    }
+  };
+
   // Send OTP for Leader
   const handleSendLeaderOtp = async (isResend = false) => {
     if (leaderLoading) return;
@@ -679,6 +707,7 @@ export const RegistrationPage = ({ onHome }) => {
                 maxLength={8}
                 value={formData.leader.studentNumber}
                 onChange={(e) => handleLeaderChange('studentNumber', e.target.value.replace(/\D/g, '').slice(0, 8))}
+                onKeyDown={handleStudentNumberKeyDown}
                 placeholder="e.g. 24154046"
                 error={formErrors.leader_studentNumber}
                 helperText="Must start with 23, 24, or 25 (7 or 8 digits)"
@@ -709,6 +738,7 @@ export const RegistrationPage = ({ onHome }) => {
                 icon={Phone}
                 value={formData.leader.phone}
                 onChange={(e) => handleLeaderChange('phone', e.target.value.replace(/\D/g, '').slice(0, 10))}
+                onKeyDown={handlePhoneKeyDown}
                 placeholder="9876543210"
                 error={formErrors.leader_phone}
                 helperText="10-digit mobile number"
@@ -915,6 +945,7 @@ export const RegistrationPage = ({ onHome }) => {
                   onChange={(e) =>
                     handleTeammateChange('studentNumber', e.target.value.replace(/\D/g, '').slice(0, 8))
                   }
+                  onKeyDown={handleStudentNumberKeyDown}
                   placeholder="e.g. 2412214"
                   error={formErrors.teammate_studentNumber}
                   helperText="Must start with 23, 24, or 25 (7 or 8 digits)"
@@ -944,6 +975,7 @@ export const RegistrationPage = ({ onHome }) => {
                   onChange={(e) =>
                     handleTeammateChange('phone', e.target.value.replace(/\D/g, '').slice(0, 10))
                   }
+                  onKeyDown={handlePhoneKeyDown}
                   placeholder="9876543210"
                   error={formErrors.teammate_phone}
                   helperText="10-digit mobile number"
