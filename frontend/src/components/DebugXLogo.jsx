@@ -16,7 +16,7 @@ export const DebugXLogo = ({ size = 'md', className = '' }) => {
   return (
     <div className={`inline-flex items-center ${className}`}>
       <svg
-        viewBox="0 0 310 70"
+        viewBox="0 0 230 70"
         className={`${heightClass} w-auto select-none`}
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -39,6 +39,7 @@ export const DebugXLogo = ({ size = 'md', className = '' }) => {
         <text
           x="4"
           y="52"
+          className="debugx-text-base"
           fontFamily="'Space Grotesk', 'Chakra Petch', Impact, sans-serif"
           fontStyle="italic"
           fontWeight="900"
@@ -60,14 +61,16 @@ export const DebugXLogo = ({ size = 'md', className = '' }) => {
           fontSize="58"
           letterSpacing="1"
           fill={`url(#dots-${uniqueId})`}
+          stroke="none"
         >
           DeBug
         </text>
 
-        {/* X (Hot Pink base with white halftone dots & outline) */}
+        {/* X (Brought close to DeBug at x="180", was previously x="222") */}
         <text
-          x="222"
+          x="180"
           y="52"
+          className="debugx-x-base"
           fontFamily="'Space Grotesk', 'Chakra Petch', Impact, sans-serif"
           fontStyle="italic"
           fontWeight="900"
@@ -81,7 +84,7 @@ export const DebugXLogo = ({ size = 'md', className = '' }) => {
           X
         </text>
         <text
-          x="222"
+          x="180"
           y="52"
           fontFamily="'Space Grotesk', 'Chakra Petch', Impact, sans-serif"
           fontStyle="italic"
@@ -89,6 +92,7 @@ export const DebugXLogo = ({ size = 'md', className = '' }) => {
           fontSize="58"
           letterSpacing="1"
           fill={`url(#dots-${uniqueId})`}
+          stroke="none"
         >
           X
         </text>

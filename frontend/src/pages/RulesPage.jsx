@@ -61,23 +61,23 @@ export const RulesPage = ({ onRegisterClick, onHome }) => {
             return (
               <div
                 key={rule.num}
-                className="rounded-xl border border-[#B8C8D4] bg-[#EFECE3]/70 overflow-hidden transition-all shadow-sm"
+                className="rounded-xl border border-[#B8C8D4] dark:border-[#2E2E2E] bg-[#EFECE3]/70 dark:bg-[#141414] overflow-hidden transition-all shadow-sm"
               >
                 <button
                   type="button"
                   onClick={() => setOpenIndex(isOpen ? -1 : idx)}
-                  className="w-full px-5 py-4 flex items-center justify-between text-left transition-colors hover:bg-[#E8E4DA]"
+                  className="w-full px-5 py-4 flex items-center justify-between text-left transition-colors hover:bg-[#E8E4DA] dark:hover:bg-[#1F1F1F]"
                 >
-                  <span className="font-sans font-bold text-base sm:text-lg text-black">
+                  <span className="font-sans font-bold text-base sm:text-lg text-black dark:text-white">
                     {rule.title}
                   </span>
-                  <span className="text-xl sm:text-2xl font-bold font-mono text-[#0284C7] ml-4 leading-none">
+                  <span className="text-xl sm:text-2xl font-bold font-mono text-[#0284C7] dark:text-[#38BDF8] ml-4 leading-none">
                     {isOpen ? '—' : '+'}
                   </span>
                 </button>
 
                 {isOpen && (
-                  <div className="px-5 pb-5 pt-1 text-xs sm:text-sm font-sans text-gray-700 leading-relaxed border-t border-[#B8C8D4]/40">
+                  <div className="px-5 pb-5 pt-1 text-xs sm:text-sm font-sans text-gray-700 dark:text-gray-300 leading-relaxed border-t border-[#B8C8D4]/40 dark:border-[#2E2E2E]">
                     {rule.content}
                   </div>
                 )}

@@ -347,3 +347,45 @@
   background: #FF2E51 !important;
 }
 
+/* ==========================================================================
+   DEBUGX LOGO TYPOGRAPHY (High-Contrast Silhouette in Dark & Light)
+   ========================================================================== */
+
+.debugx-text-base {
+  fill: #111827;
+  stroke: #000000;
+  stroke-width: 3.5px;
+  stroke-linejoin: round;
+}
+
+.dark .debugx-text-base {
+  fill: #0D0D0D !important;
+  stroke: #FFFFFF !important;
+  stroke-width: 2.8px !important;
+  filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.4));
+}
+
+.debugx-x-base {
+  fill: #FF2E51;
+  stroke: #000000;
+  stroke-width: 3.5px;
+  stroke-linejoin: round;
+}
+
+.dark .debugx-x-base {
+  fill: #FF2E51 !important;
+  stroke: #FFFFFF !important;
+  stroke-width: 2.8px !important;
+  filter: drop-shadow(0 0 6px rgba(255, 46, 81, 0.7));
+}
+
+/* Accordion Dark Theme Protection (Rules & FAQ) */
+.dark .hover\:bg-\[\#E8E4DA\]:hover {
+  background-color: #1F1F1F !important;
+}
+
+.dark [class*="bg-[#EFECE3]"] {
+  background-color: #141414 !important;
+  border-color: #2E2E2E !important;
+}
+
