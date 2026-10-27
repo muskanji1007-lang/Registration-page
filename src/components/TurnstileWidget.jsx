@@ -47,7 +47,7 @@ const TurnstileWidget = forwardRef(({ onVerify, onSuccess, onExpire, onError, la
       widgetIdRef.current = window.turnstile.render(containerRef.current, {
         sitekey: activeSiteKey,
         action: 'otp_send',
-        theme: 'light',
+        theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
         callback: (token) => {
           setIsVerified(true);
           setIsExpired(false);

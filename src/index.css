@@ -111,3 +111,198 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #FF2E51;
 }
+
+/* ==========================================================================
+   DARK THEME ARCHITECTURE (DeBugX Hacker / Cyber Terminal Neobrutalism)
+   ========================================================================== */
+
+.dark {
+  color-scheme: dark;
+}
+
+.dark body {
+  background-color: #0A0E17 !important;
+  color: #F8FAFC !important;
+}
+
+/* Background Overrides */
+.dark .bg-\[\#F6F3EB\] {
+  background-color: #0A0E17 !important;
+}
+
+.dark .bg-\[\#FCFAF6\] {
+  background-color: #111726 !important;
+}
+
+.dark .bg-white {
+  background-color: #151D2E !important;
+}
+
+.dark .bg-gray-50,
+.dark .bg-gray-100 {
+  background-color: #0F172A !important;
+  color: #CBD5E1 !important;
+}
+
+.dark .bg-\[\#F4EFE6\],
+.dark .bg-\[\#F5F2EB\],
+.dark .bg-\[\#EFECE3\]\/70 {
+  background-color: #0D1321 !important;
+  color: #E2E8F0 !important;
+}
+
+/* Text Overrides */
+.dark .text-black {
+  color: #F8FAFC !important;
+}
+
+.dark .text-gray-800,
+.dark .text-gray-700 {
+  color: #E2E8F0 !important;
+}
+
+.dark .text-gray-600 {
+  color: #94A3B8 !important;
+}
+
+.dark .text-gray-500 {
+  color: #64748B !important;
+}
+
+/* Borders */
+.dark .border-black {
+  border-color: #243046 !important;
+}
+
+.dark .border-black\/10,
+.dark .border-black\/20,
+.dark .border-black\/30,
+.dark .border-black\/40 {
+  border-color: #1E293B !important;
+}
+
+.dark .border-gray-100,
+.dark .border-gray-200,
+.dark .border-gray-300 {
+  border-color: #243046 !important;
+}
+
+/* Neo-Brutalist Containers in Dark Theme */
+.dark .neo-box,
+.dark .neo-box-lg,
+.dark .neo-box-xl {
+  background-color: #111726 !important;
+  border-color: #243046 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+  color: #F8FAFC !important;
+}
+
+.dark .neo-box-xl {
+  box-shadow: 6px 6px 0px #000000 !important;
+}
+
+.dark .neo-card-interactive {
+  background-color: #111726 !important;
+  border-color: #243046 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+  color: #F8FAFC !important;
+}
+
+.dark .neo-card-interactive:hover {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px #000000 !important;
+  border-color: #FF2E51 !important;
+}
+
+/* Neo-Buttons in Dark Theme */
+.dark .neo-button.bg-white {
+  background-color: #162032 !important;
+  color: #F8FAFC !important;
+  border-color: #334155 !important;
+  box-shadow: 3px 3px 0px #000000 !important;
+}
+
+.dark .neo-button.bg-white:hover:not(:disabled) {
+  background-color: #1E293B !important;
+  box-shadow: 1px 1px 0px #000000 !important;
+}
+
+.dark .neo-button.bg-black {
+  background-color: #0F172A !important;
+  color: #FFFFFF !important;
+  border-color: #334155 !important;
+}
+
+.dark .neo-button.bg-black:hover:not(:disabled) {
+  background-color: #1E293B !important;
+}
+
+/* Form Inputs & Elements in Dark Theme */
+.dark input:not([type="checkbox"]):not([type="radio"]),
+.dark textarea,
+.dark select {
+  background-color: #0B111E !important;
+  color: #FFFFFF !important;
+  border-color: #334155 !important;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: #FF2E51 !important;
+}
+
+.dark input::placeholder {
+  color: #64748B !important;
+}
+
+.dark input[readonly] {
+  background-color: #0F172A !important;
+  color: #94A3B8 !important;
+}
+
+/* Custom Dropdown in Dark Theme */
+.dark [role="listbox"] {
+  background-color: #151D2E !important;
+  border-color: #334155 !important;
+  box-shadow: 4px 4px 0px #000000 !important;
+}
+
+.dark [role="option"][aria-selected="true"] {
+  background-color: #0B111E !important;
+  color: #FBBF24 !important;
+}
+
+/* Status Banners in Dark Mode */
+.dark .bg-emerald-50 {
+  background-color: rgba(6, 78, 59, 0.35) !important;
+  color: #6EE7B7 !important;
+  border-color: #059669 !important;
+}
+
+.dark .bg-red-50 {
+  background-color: rgba(127, 29, 29, 0.35) !important;
+  color: #FCA5A5 !important;
+  border-color: #DC2626 !important;
+}
+
+/* Halftone Patterns in Dark Theme */
+.dark .halftone-dots {
+  background-image: radial-gradient(#243046 1.5px, transparent 1.5px) !important;
+}
+
+/* Scrollbar in Dark Theme */
+.dark ::-webkit-scrollbar-track {
+  background: #0A0E17 !important;
+  border-left: 1px solid #1E293B !important;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #243046 !important;
+  border: 1px solid #1E293B !important;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #FF2E51 !important;
+}
+

@@ -11,14 +11,32 @@ import DebugXLogo from './components/DebugXLogo';
 export const App = () => {
   const [activePage, setActivePage] = useState('home');
   const [isLookupOpen, setIsLookupOpen] = useState(false);
+  const [theme, setTheme] = useState(() => {
+    return localStorage.getItem('debugx-theme') || 'dark';
+  });
+
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      if (next === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      localStorage.setItem('debugx-theme', next);
+      return next;
+    });
+  };
 
   return (
-    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#F6F3EB] text-[#000000] flex flex-col justify-between selection:bg-[#FF2E51] selection:text-white">
+    <div className="min-h-screen w-full max-w-full overflow-x-hidden bg-[#F6F3EB] dark:bg-[#0B0F17] text-[#000000] dark:text-[#F0F6FC] flex flex-col justify-between selection:bg-[#FF2E51] selection:text-white transition-colors duration-200">
       {/* Top Navigation */}
       <Navbar
         activePage={activePage}
         setActivePage={setActivePage}
         onAdminClick={() => setIsLookupOpen(true)}
+        theme={theme}
+        toggleTheme={toggleTheme}
       />
 
       {/* Main Content Area */}

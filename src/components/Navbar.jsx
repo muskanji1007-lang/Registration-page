@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { User, Menu, X, CheckCircle2, AlertTriangle, ArrowLeft } from 'lucide-react';
+import { User, Menu, X, CheckCircle2, AlertTriangle, ArrowLeft, Sun, Moon } from 'lucide-react';
 import CccLogo from './CccLogo';
 import DebugXLogo from './DebugXLogo';
 import { apiService } from '../services/apiService';
 
-export const Navbar = ({ activePage, setActivePage, onAdminClick }) => {
+export const Navbar = ({ activePage, setActivePage, onAdminClick, theme = 'dark', toggleTheme }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [backendStatus, setBackendStatus] = useState('checking'); // 'online' | 'offline' | 'checking'
 
@@ -114,11 +114,25 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick }) => {
               </button>
             )}
 
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+              aria-label="Toggle theme"
+              className="p-1.5 border-2 border-black bg-white hover:bg-gray-100 shadow-neo-sm transition-all flex items-center justify-center cursor-pointer"
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-4 h-4 text-[#FBBF24]" />
+              ) : (
+                <Moon className="w-4 h-4 text-gray-800" />
+              )}
+            </button>
+
             {/* Admin / Desk Icon */}
             <button
               onClick={onAdminClick}
               title="Receipt / Ticket Lookup"
-              className="p-1.5 border-2 border-black bg-white hover:bg-gray-100 shadow-neo-sm transition-all"
+              className="p-1.5 border-2 border-black bg-white hover:bg-gray-100 shadow-neo-sm transition-all cursor-pointer"
             >
               <User className="w-4 h-4 text-black" />
             </button>
@@ -126,7 +140,7 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick }) => {
             {/* Mobile Hamburger Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-1.5 border-2 border-black bg-white shadow-neo-sm"
+              className="md:hidden p-1.5 border-2 border-black bg-white shadow-neo-sm cursor-pointer"
               aria-label="Toggle menu"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -158,6 +172,28 @@ export const Navbar = ({ activePage, setActivePage, onAdminClick }) => {
                 {item.label}
               </button>
             ))}
+
+            {/* Theme Toggle row in mobile menu */}
+            <div className="pt-2 border-t border-gray-200 flex items-center justify-between">
+              <span className="text-xs font-mono font-bold uppercase text-gray-600">Theme</span>
+              <button
+                onClick={toggleTheme}
+                className="neo-button bg-white text-black px-3 py-1 text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer"
+              >
+                {theme === 'dark' ? (
+                  <>
+                    <Sun className="w-3.5 h-3.5 text-[#FBBF24]" />
+                    <span>LIGHT MODE</span>
+                  </>
+                ) : (
+                  <>
+                    <Moon className="w-3.5 h-3.5 text-gray-800" />
+                    <span>DARK MODE</span>
+                  </>
+                )}
+              </button>
+            </div>
+
             <div className="pt-2 border-t border-gray-200">
               <button
                 onClick={() => {
