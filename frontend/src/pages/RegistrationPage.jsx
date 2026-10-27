@@ -716,10 +716,9 @@ export const RegistrationPage = ({ onHome }) => {
                 onChange={(e) => handleLeaderChange('fullName', e.target.value)}
                 placeholder="e.g. Alex Vance"
                 error={formErrors.leader_fullName}
-                helperText="Candidate official name"
               />
 
-              {/* Student No. (Updated as requested in Screenshot 2) */}
+              {/* Student No. */}
               <FormField
                 label="STUDENT NO."
                 name="studentNumber"
@@ -730,7 +729,6 @@ export const RegistrationPage = ({ onHome }) => {
                 onKeyDown={handleStudentNumberKeyDown}
                 placeholder="e.g. 24154046"
                 error={formErrors.leader_studentNumber}
-                helperText="Must start with 23, 24, or 25 (7 or 8 digits)"
               />
 
               {/* Institutional College Email Preview */}
@@ -741,7 +739,6 @@ export const RegistrationPage = ({ onHome }) => {
                 value={formData.leader.collegeEmail}
                 readOnly
                 placeholder="alex24154046@akgec.ac.in"
-                helperText="Official AKGEC address (firstName + studentNo + @akgec.ac.in)"
                 rightBadge={
                   <span className="text-[10px] font-mono font-bold text-[#FF2E51]">
                     @akgec.ac.in
@@ -761,7 +758,6 @@ export const RegistrationPage = ({ onHome }) => {
                 onKeyDown={handlePhoneKeyDown}
                 placeholder="9876543210"
                 error={formErrors.leader_phone}
-                helperText="10-digit mobile number"
               />
 
               {/* Branch & Section */}
@@ -923,7 +919,6 @@ export const RegistrationPage = ({ onHome }) => {
                   formData.registrationType === 'team' ? 'e.g. BugBusters' : 'e.g. SoloHunter'
                 }
                 error={formErrors.teamName}
-                helperText="Team designation for the official event leaderboard"
               />
             </div>
           </div>
@@ -952,7 +947,6 @@ export const RegistrationPage = ({ onHome }) => {
                   onChange={(e) => handleTeammateChange('fullName', e.target.value)}
                   placeholder="e.g. Aman Verma"
                   error={formErrors.teammate_fullName}
-                  helperText="2-100 characters, letters only"
                 />
 
                 {/* Teammate Student No. */}
@@ -968,7 +962,6 @@ export const RegistrationPage = ({ onHome }) => {
                   onKeyDown={handleStudentNumberKeyDown}
                   placeholder="e.g. 2412214"
                   error={formErrors.teammate_studentNumber}
-                  helperText="Must start with 23, 24, or 25 (7 or 8 digits)"
                 />
 
                 <FormField
@@ -998,7 +991,6 @@ export const RegistrationPage = ({ onHome }) => {
                   onKeyDown={handlePhoneKeyDown}
                   placeholder="9876543210"
                   error={formErrors.teammate_phone}
-                  helperText="10-digit mobile number"
                 />
 
                 {/* Branch */}
